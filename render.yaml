@@ -1,0 +1,30 @@
+services:
+  - type: web
+    name: clp-customer-loyalty
+    runtime: python
+    region: oregon
+    plan: standard
+    buildCommand: bash render-build.sh
+    startCommand: bash render-start.sh
+    autoDeploy: true
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.10.12"
+      - key: FRAPPE_SITE_NAME
+        value: "clp.localhost"
+      - key: WEB_CONCURRENCY
+        value: "2"
+      - key: DB_HOST
+        sync: false
+      - key: DB_PORT
+        value: "3306"
+      - key: DB_NAME
+        sync: false
+      - key: DB_USER
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      - key: REDIS_CACHE_URL
+        sync: false
+      - key: REDIS_QUEUE_URL
+        sync: false
