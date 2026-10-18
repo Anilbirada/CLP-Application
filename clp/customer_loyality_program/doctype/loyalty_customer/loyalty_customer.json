@@ -1,0 +1,231 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "naming_series:",
+ "creation": "2025-12-16 02:06:04.746215",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "customer_details_section",
+  "naming_series",
+  "customer_name",
+  "mobile_number",
+  "column_break_1",
+  "vehicle_number",
+  "status",
+  "column_break_2",
+  "registration_pump",
+  "registration_date",
+  "loyalty_tracking_section",
+  "current_cycle_liters",
+  "total_liters_purchased",
+  "column_break_3",
+  "total_gifts_received",
+  "last_gift_date",
+  "created_by_user",
+  "referred_by_customer",
+  "referral_points_balance",
+  "qr_access_token"
+ ],
+ "fields": [
+  {
+   "fieldname": "customer_details_section",
+   "fieldtype": "Section Break",
+   "label": "Customer Details"
+  },
+  {
+   "fieldname": "customer_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Customer Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "mobile_number",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Mobile Number",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "vehicle_number",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Vehicle Number",
+   "reqd": 1
+  },
+  {
+   "default": "Active",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Status",
+   "options": "Active\nInactive"
+  },
+  {
+   "fieldname": "column_break_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "Today",
+   "fieldname": "registration_date",
+   "fieldtype": "Date",
+   "label": "Registration Date"
+  },
+  {
+   "fieldname": "loyalty_tracking_section",
+   "fieldtype": "Section Break",
+   "label": "Loyalty Tracking"
+  },
+  {
+   "default": "0",
+   "fieldname": "current_cycle_liters",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Current Cycle Liters",
+   "precision": "2",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "total_liters_purchased",
+   "fieldtype": "Float",
+   "label": "Total Liters Purchased",
+   "precision": "2",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "total_gifts_received",
+   "fieldtype": "Int",
+   "label": "Total Gifts Received",
+   "read_only": 1
+  },
+  {
+   "fieldname": "last_gift_date",
+   "fieldtype": "Date",
+   "label": "Last Gift Date",
+   "read_only": 1
+  },
+  {
+   "default": "MANUAL-.####.",
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Naming Series",
+   "options": "MANUAL-.####.\nQR-.####.",
+   "reqd": 1
+  },
+  {
+   "fieldname": "created_by_user",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Created By",
+   "no_copy": 1,
+   "options": "User",
+   "read_only": 1
+  },
+  {
+   "fieldname": "referred_by_customer",
+   "fieldtype": "Link",
+   "label": "Referred By Customer",
+   "options": "Loyalty Customer",
+   "description": "Optional customer who referred this customer."
+  },
+  {
+   "fieldname": "referral_points_balance",
+   "fieldtype": "Int",
+   "label": "Referral Points Balance",
+   "default": "0",
+   "read_only": 1
+  },
+  {
+   "fieldname": "qr_access_token",
+   "fieldtype": "Data",
+   "label": "QR Access Token",
+   "hidden": 1,
+   "read_only": 1,
+   "no_copy": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "registration_pump",
+   "fieldtype": "Link",
+   "label": "Registration Petrol Pump",
+   "options": "Petrol Pump Location",
+   "in_list_view": 0,
+   "description": "Petrol pump where the customer first registered."
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-01-02 13:06:24.365965",
+ "modified_by": "Administrator",
+ "module": "Customer Loyality Program",
+ "name": "Loyalty Customer",
+ "naming_rule": "By \"Naming Series\" field",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Pump Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "CLM Incharge",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Pump Owner",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

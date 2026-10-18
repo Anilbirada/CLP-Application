@@ -1,0 +1,116 @@
+[
+ {
+  "add_total_row": 0,
+  "add_translate_data": 0,
+  "columns": [],
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Report",
+  "filters": [],
+  "is_standard": "Yes",
+  "javascript": null,
+  "json": null,
+  "letter_head": null,
+  "modified": "2025-12-28 22:55:06.673178",
+  "module": "Customer Loyality Program",
+  "name": "Customer Loyalty Dashboard",
+  "prepared_report": 0,
+  "query": null,
+  "ref_doctype": "Loyalty Customer",
+  "reference_report": null,
+  "report_name": "Customer Loyalty Dashboard",
+  "report_script": null,
+  "report_type": "Script Report",
+  "roles": [
+   {
+    "parent": "Customer Loyalty Dashboard",
+    "parentfield": "roles",
+    "parenttype": "Report",
+    "role": "Pump Manager"
+   },
+   {
+    "parent": "Customer Loyalty Dashboard",
+    "parentfield": "roles",
+    "parenttype": "Report",
+    "role": "Pump Owner"
+   }
+  ],
+  "timeout": 0
+ },
+ {
+  "add_total_row": 0,
+  "add_translate_data": 0,
+  "columns": [],
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Report",
+  "filters": [],
+  "is_standard": "Yes",
+  "javascript": null,
+  "json": null,
+  "letter_head": null,
+  "modified": "2025-12-28 22:54:53.278749",
+  "module": "Customer Loyality Program",
+  "name": "Gift Redemption Summary",
+  "prepared_report": 0,
+  "query": null,
+  "ref_doctype": "Gift Redemption",
+  "reference_report": null,
+  "report_name": "Gift Redemption Summary",
+  "report_script": null,
+  "report_type": "Script Report",
+  "roles": [
+   {
+    "parent": "Gift Redemption Summary",
+    "parentfield": "roles",
+    "parenttype": "Report",
+    "role": "Pump Manager"
+   },
+   {
+    "parent": "Gift Redemption Summary",
+    "parentfield": "roles",
+    "parenttype": "Report",
+    "role": "Pump Owner"
+   }
+  ],
+  "timeout": 0
+ },
+ {
+  "add_total_row": 0,
+  "add_translate_data": 0,
+  "columns": [],
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Report",
+  "filters": [],
+  "is_standard": "Yes",
+  "javascript": null,
+  "json": null,
+  "letter_head": null,
+  "modified": "2025-12-28 22:54:40.700834",
+  "module": "Customer Loyality Program",
+  "name": "Pump-wise Gift Stock",
+  "prepared_report": 0,
+  "query": null,
+  "ref_doctype": "Petrol Pump Location",
+  "reference_report": null,
+  "report_name": "Pump-wise Gift Stock",
+  "report_script": null,
+  "report_type": "Script Report",
+  "roles": [
+   {
+    "parent": "Pump-wise Gift Stock",
+    "parentfield": "roles",
+    "parenttype": "Report",
+    "role": "Pump Manager"
+   },
+   {
+    "parent": "Pump-wise Gift Stock",
+    "parentfield": "roles",
+    "parenttype": "Report",
+    "role": "Pump Owner"
+   }
+  ],
+  "timeout": 0
+ }
+]

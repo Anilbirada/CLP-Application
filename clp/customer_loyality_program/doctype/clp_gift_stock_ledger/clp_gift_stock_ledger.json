@@ -1,0 +1,142 @@
+{
+ "doctype": "DocType",
+ "name": "CLP Gift Stock Ledger",
+ "module": "Customer Loyality Program",
+ "autoname": "format:GSL-{YYYY}-{#####}",
+ "engine": "InnoDB",
+ "issingle": 0,
+ "track_changes": 0,
+ "allow_rename": 0,
+ "field_order": [
+  "posting_datetime",
+  "petrol_pump",
+  "pump_name",
+  "gift_item",
+  "item_name",
+  "column_break_1",
+  "voucher_type",
+  "voucher_no",
+  "qty_change",
+  "balance_qty",
+  "user",
+  "remarks"
+ ],
+ "fields": [
+  {
+   "fieldname": "posting_datetime",
+   "fieldtype": "Datetime",
+   "label": "Posting Date & Time",
+   "reqd": 1,
+   "in_list_view": 1,
+   "default": "Now"
+  },
+  {
+   "fieldname": "petrol_pump",
+   "fieldtype": "Link",
+   "label": "Petrol Pump",
+   "options": "Petrol Pump Location",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "pump_name",
+   "fieldtype": "Data",
+   "label": "Pump Name",
+   "fetch_from": "petrol_pump.pump_name",
+   "read_only": 1
+  },
+  {
+   "fieldname": "gift_item",
+   "fieldtype": "Link",
+   "label": "Gift Item",
+   "options": "Item",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "item_name",
+   "fieldtype": "Data",
+   "label": "Item Name",
+   "fetch_from": "gift_item.item_name",
+   "read_only": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "voucher_type",
+   "fieldtype": "Select",
+   "label": "Transaction Type",
+   "options": "Stock Addition\nStock Subtraction\nGift Redemption\nStock Transfer In\nStock Transfer Out\nOpening Balance",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "voucher_no",
+   "fieldtype": "Data",
+   "label": "Voucher / Reference No",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "qty_change",
+   "fieldtype": "Float",
+   "label": "Qty Change (+/-)",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "balance_qty",
+   "fieldtype": "Float",
+   "label": "Balance After Entry",
+   "read_only": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "user",
+   "fieldtype": "Link",
+   "label": "User",
+   "options": "User"
+  },
+  {
+   "fieldname": "remarks",
+   "fieldtype": "Small Text",
+   "label": "Remarks"
+  }
+ ],
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "create": 1,
+   "report": 1,
+   "export": 1
+  },
+  {
+   "role": "Pump Owner",
+   "read": 1,
+   "create": 1,
+   "report": 1,
+   "export": 1
+  },
+  {
+   "role": "CLM Incharge",
+   "read": 1,
+   "create": 1,
+   "report": 1,
+   "export": 1
+  },
+  {
+   "role": "CLP Reports Viewer",
+   "read": 1,
+   "report": 1,
+   "export": 1
+  },
+  {
+   "role": "Pump Manager",
+   "read": 1,
+   "report": 1
+  }
+ ]
+}

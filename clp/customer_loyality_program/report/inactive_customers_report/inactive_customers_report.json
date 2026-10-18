@@ -1,0 +1,24 @@
+{
+ "doctype": "Report",
+ "name": "Inactive Customers Report",
+ "report_name": "Inactive Customers Report",
+ "ref_doctype": "Loyalty Customer",
+ "report_type": "Script Report",
+ "is_standard": "Yes",
+ "module": "Customer Loyality Program",
+ "add_total_row": 0,
+ "roles": [
+  {
+   "role": "System Manager"
+  },
+  {
+   "role": "Pump Owner"
+  },
+  {
+   "role": "CLM Incharge"
+  },
+  {
+   "role": "CLP Reports Viewer"
+  }
+ ]
+}

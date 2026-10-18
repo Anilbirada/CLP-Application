@@ -1,0 +1,243 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "naming_series:",
+ "creation": "2025-12-28 14:26:40.451420",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "naming_series",
+  "request_date",
+  "column_break_1",
+  "status",
+  "pump_section",
+  "requesting_pump",
+  "requesting_warehouse",
+  "column_break_2",
+  "source_pump",
+  "source_warehouse",
+  "items_section",
+  "gift_item",
+  "quantity",
+  "column_break_3",
+  "available_stock",
+  "current_stock_requesting",
+  "details_section",
+  "notes",
+  "column_break_4",
+  "stock_entry",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "default": "GSR-.YYYY.-.####.",
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Series",
+   "options": "GSR-.YYYY.-.####.",
+   "reqd": 1
+  },
+  {
+   "default": "Today",
+   "fieldname": "request_date",
+   "fieldtype": "Date",
+   "label": "Request Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "Draft",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Status",
+   "options": "Draft\nPending\nApproved\nCompleted\nRejected",
+   "reqd": 1
+  },
+  {
+   "fieldname": "pump_section",
+   "fieldtype": "Section Break",
+   "label": "Pump Details"
+  },
+  {
+   "fieldname": "requesting_pump",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Requesting Pump",
+   "options": "Petrol Pump Location",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "requesting_pump.warehouse",
+   "fieldname": "requesting_warehouse",
+   "fieldtype": "Link",
+   "label": "To Warehouse",
+   "options": "Warehouse",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "source_pump",
+   "fieldtype": "Link",
+   "label": "Source Pump",
+   "options": "Petrol Pump Location",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "source_pump.warehouse",
+   "fieldname": "source_warehouse",
+   "fieldtype": "Link",
+   "label": "From Warehouse",
+   "options": "Warehouse",
+   "read_only": 1
+  },
+  {
+   "fieldname": "items_section",
+   "fieldtype": "Section Break",
+   "label": "Gift Items to Transfer"
+  },
+  {
+   "fieldname": "gift_item",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Gift Item",
+   "options": "Item",
+   "reqd": 1
+  },
+  {
+   "fieldname": "quantity",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Quantity",
+   "precision": "2",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "available_stock",
+   "fieldtype": "Float",
+   "label": "Available at Source",
+   "precision": "2",
+   "read_only": 1
+  },
+  {
+   "fieldname": "current_stock_requesting",
+   "fieldtype": "Float",
+   "label": "Current Stock at Requesting Pump",
+   "precision": "2",
+   "read_only": 1
+  },
+  {
+   "fieldname": "details_section",
+   "fieldtype": "Section Break",
+   "label": "Additional Details"
+  },
+  {
+   "fieldname": "notes",
+   "fieldtype": "Small Text",
+   "label": "Notes/Reason"
+  },
+  {
+   "fieldname": "column_break_4",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "stock_entry",
+   "fieldtype": "Link",
+   "label": "Stock Entry",
+   "options": "Stock Entry",
+   "read_only": 1
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Gift Stock Request",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2026-01-01 23:43:29.579195",
+ "modified_by": "Administrator",
+ "module": "Customer Loyality Program",
+ "name": "Gift Stock Request",
+ "naming_rule": "By \"Naming Series\" field",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "cancel": 1,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "amend": 1,
+   "cancel": 1,
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Pump Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "amend": 1,
+   "cancel": 1,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Pump Owner",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "CLM Incharge",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

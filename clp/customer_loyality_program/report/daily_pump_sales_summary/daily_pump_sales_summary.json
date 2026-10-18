@@ -1,0 +1,27 @@
+{
+ "doctype": "Report",
+ "name": "Daily Pump Sales Summary",
+ "report_name": "Daily Pump Sales Summary",
+ "ref_doctype": "Fuel Purchase Entry",
+ "report_type": "Script Report",
+ "is_standard": "Yes",
+ "module": "Customer Loyality Program",
+ "add_total_row": 1,
+ "roles": [
+  {
+   "role": "System Manager"
+  },
+  {
+   "role": "Pump Owner"
+  },
+  {
+   "role": "CLM Incharge"
+  },
+  {
+   "role": "CLP Reports Viewer"
+  },
+  {
+   "role": "Pump Manager"
+  }
+ ]
+}

@@ -1,0 +1,13 @@
+{
+ "creation": "2025-12-25 15:23:56.036420",
+ "docstatus": 0,
+ "doctype": "Dashboard Chart Source",
+ "idx": 0,
+ "modified": "2025-12-25 15:25:18.885013",
+ "modified_by": "Administrator",
+ "module": "Customer Loyality Program",
+ "name": "Top Customers",
+ "owner": "Administrator",
+ "source_name": "Top Customers",
+ "timeseries": 1
+}

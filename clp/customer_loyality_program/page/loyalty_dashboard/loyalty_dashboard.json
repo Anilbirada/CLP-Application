@@ -1,0 +1,29 @@
+{
+ "content": null,
+ "creation": "2025-12-28 17:07:16.285961",
+ "docstatus": 0,
+ "doctype": "Page",
+ "idx": 0,
+ "modified": "2025-12-28 22:49:08.556499",
+ "modified_by": "Administrator",
+ "module": "Customer Loyality Program",
+ "name": "loyalty-dashboard",
+ "owner": "Administrator",
+ "page_name": "loyalty-dashboard",
+ "roles": [
+  {
+   "role": "CLM Incharge"
+  },
+  {
+   "role": "Pump Manager"
+  },
+  {
+   "role": "Pump Owner"
+  }
+ ],
+ "script": null,
+ "standard": "Yes",
+ "style": null,
+ "system_page": 0,
+ "title": "Loyalty Program Dashboard"
+}

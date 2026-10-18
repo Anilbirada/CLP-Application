@@ -1,0 +1,80 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2026-01-03 02:01:40.709826",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "gift_item",
+  "item_name",
+  "points_required",
+  "available_stock",
+  "column_break_1",
+  "stock_after_redeem"
+ ],
+ "fields": [
+  {
+   "columns": 3,
+   "fieldname": "gift_item",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Gift Item",
+   "options": "Item",
+   "reqd": 1
+  },
+  {
+   "columns": 3,
+   "fetch_from": "gift_item.item_name",
+   "fieldname": "item_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Item Name",
+   "read_only": 1
+  },
+  {
+   "columns": 2,
+   "fieldname": "points_required",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Points Required (L)",
+   "precision": "2",
+   "reqd": 1
+  },
+  {
+   "columns": 2,
+   "fieldname": "available_stock",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Stock Available",
+   "precision": "2",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "columns": 2,
+   "fieldname": "stock_after_redeem",
+   "fieldtype": "Float",
+   "label": "Stock After",
+   "precision": "2",
+   "read_only": 1
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2026-01-03 02:01:40.709826",
+ "modified_by": "Administrator",
+ "module": "Customer Loyality Program",
+ "name": "Gift Redemption Item",
+ "owner": "Administrator",
+ "permissions": [],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

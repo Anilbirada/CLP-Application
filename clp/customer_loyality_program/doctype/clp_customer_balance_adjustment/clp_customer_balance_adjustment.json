@@ -1,0 +1,168 @@
+{
+ "doctype": "DocType",
+ "name": "CLP Customer Balance Adjustment",
+ "module": "Customer Loyality Program",
+ "autoname": "format:ADJ-{YYYY}-{#####}",
+ "engine": "InnoDB",
+ "issingle": 0,
+ "is_submittable": 1,
+ "track_changes": 1,
+ "allow_rename": 0,
+ "field_order": [
+  "customer_section",
+  "customer",
+  "customer_name",
+  "column_break_1",
+  "mobile_number",
+  "vehicle_number",
+  "adjustment_section",
+  "adjustment_type",
+  "points",
+  "column_break_2",
+  "previous_balance",
+  "new_balance",
+  "reason_section",
+  "reason",
+  "notes",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "customer_section",
+   "fieldtype": "Section Break",
+   "label": "Customer"
+  },
+  {
+   "fieldname": "customer",
+   "fieldtype": "Link",
+   "label": "Customer",
+   "options": "Loyalty Customer",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "customer_name",
+   "fieldtype": "Data",
+   "label": "Customer Name",
+   "fetch_from": "customer.customer_name",
+   "read_only": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "mobile_number",
+   "fieldtype": "Data",
+   "label": "Mobile Number",
+   "fetch_from": "customer.mobile_number",
+   "read_only": 1
+  },
+  {
+   "fieldname": "vehicle_number",
+   "fieldtype": "Data",
+   "label": "Vehicle Number",
+   "fetch_from": "customer.vehicle_number",
+   "read_only": 1
+  },
+  {
+   "fieldname": "adjustment_section",
+   "fieldtype": "Section Break",
+   "label": "Adjustment Details"
+  },
+  {
+   "fieldname": "adjustment_type",
+   "fieldtype": "Select",
+   "label": "Adjustment Type",
+   "options": "Add Points\nSubtract Points\nAdd Note Only",
+   "reqd": 1,
+   "in_list_view": 1,
+   "default": "Add Points"
+  },
+  {
+   "fieldname": "points",
+   "fieldtype": "Float",
+   "label": "Points / Liters",
+   "default": "0",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "column_break_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "previous_balance",
+   "fieldtype": "Float",
+   "label": "Previous Points Balance",
+   "read_only": 1
+  },
+  {
+   "fieldname": "new_balance",
+   "fieldtype": "Float",
+   "label": "New Points Balance",
+   "read_only": 1
+  },
+  {
+   "fieldname": "reason_section",
+   "fieldtype": "Section Break",
+   "label": "Reason & Notes"
+  },
+  {
+   "fieldname": "reason",
+   "fieldtype": "Select",
+   "label": "Reason",
+   "options": "Correction\nCompensation\nSpecial Promotion\nCustomer Request\nManual Note\nOther",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "notes",
+   "fieldtype": "Small Text",
+   "label": "Notes"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "options": "CLP Customer Balance Adjustment",
+   "read_only": 1,
+   "no_copy": 1
+  }
+ ],
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "submit": 1,
+   "cancel": 1,
+   "report": 1,
+   "export": 1
+  },
+  {
+   "role": "Pump Owner",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "submit": 1,
+   "cancel": 1,
+   "report": 1,
+   "export": 1
+  },
+  {
+   "role": "CLM Incharge",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "submit": 1,
+   "report": 1
+  },
+  {
+   "role": "Pump Manager",
+   "read": 1,
+   "report": 1
+  }
+ ]
+}

@@ -1,0 +1,87 @@
+{
+ "doctype": "DocType",
+ "name": "CLP Activity Log",
+ "module": "Customer Loyality Program",
+ "autoname": "hash",
+ "engine": "InnoDB",
+ "issingle": 0,
+ "track_changes": 0,
+ "allow_rename": 0,
+ "field_order": [
+  "event_datetime",
+  "actor",
+  "action",
+  "reference_doctype",
+  "reference_name",
+  "details"
+ ],
+ "fields": [
+  {
+   "fieldname": "event_datetime",
+   "fieldtype": "Datetime",
+   "label": "Event Date & Time",
+   "reqd": 1,
+   "in_list_view": 1,
+   "default": "Now"
+  },
+  {
+   "fieldname": "actor",
+   "fieldtype": "Link",
+   "label": "User",
+   "options": "User",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "action",
+   "fieldtype": "Data",
+   "label": "Action",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "reference_doctype",
+   "fieldtype": "Data",
+   "label": "Document Type",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "reference_name",
+   "fieldtype": "Data",
+   "label": "Document ID",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "details",
+   "fieldtype": "Long Text",
+   "label": "Details"
+  }
+ ],
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "create": 1,
+   "report": 1,
+   "export": 1
+  },
+  {
+   "role": "Pump Owner",
+   "read": 1,
+   "create": 1,
+   "report": 1,
+   "export": 1
+  },
+  {
+   "role": "CLM Incharge",
+   "read": 1,
+   "report": 1,
+   "export": 1
+  },
+  {
+   "role": "Pump Manager",
+   "read": 1,
+   "report": 1
+  }
+ ]
+}

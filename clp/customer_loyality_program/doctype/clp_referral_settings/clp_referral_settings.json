@@ -1,0 +1,53 @@
+{
+ "doctype": "DocType",
+ "name": "CLP Referral Settings",
+ "module": "Customer Loyality Program",
+ "issingle": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "referral_section",
+  "points_per_eligible_purchase",
+  "enabled",
+  "minimum_purchase_amount"
+ ],
+ "fields": [
+  {
+   "fieldname": "referral_section",
+   "fieldtype": "Section Break",
+   "label": "Referral Program"
+  },
+  {
+   "fieldname": "enabled",
+   "fieldtype": "Check",
+   "label": "Enable Referral Rewards",
+   "default": "0"
+  },
+  {
+   "fieldname": "points_per_eligible_purchase",
+   "fieldtype": "Int",
+   "label": "Points Per Eligible Purchase",
+   "default": "10",
+   "reqd": 1
+  },
+  {
+   "fieldname": "minimum_purchase_amount",
+   "fieldtype": "Currency",
+   "label": "Minimum Purchase Amount",
+   "default": "0"
+  }
+ ],
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1
+  },
+  {
+   "role": "Pump Owner",
+   "read": 1,
+   "write": 1,
+   "create": 1
+  }
+ ]
+}

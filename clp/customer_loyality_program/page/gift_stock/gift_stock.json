@@ -1,0 +1,26 @@
+{
+ "content": null,
+ "creation": "2025-12-28 17:05:44.253253",
+ "docstatus": 0,
+ "doctype": "Page",
+ "idx": 0,
+ "modified": "2025-12-28 22:50:54.667044",
+ "modified_by": "Administrator",
+ "module": "Customer Loyality Program",
+ "name": "gift-stock",
+ "owner": "Administrator",
+ "page_name": "gift-stock",
+ "roles": [
+  {
+   "role": "Pump Manager"
+  },
+  {
+   "role": "Pump Owner"
+  }
+ ],
+ "script": null,
+ "standard": "Yes",
+ "style": null,
+ "system_page": 0,
+ "title": "Gift Stock"
+}

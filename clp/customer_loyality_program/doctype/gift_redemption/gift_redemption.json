@@ -1,0 +1,265 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:GIFT-{#####}",
+ "creation": "2025-12-16 02:06:05.169986",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "gifts_section",
+  "items",
+  "amended_from",
+  "column_break_gifts",
+  "total_points",
+  "gift_given_by",
+  "settings_section",
+  "reset_counter",
+  "allow_negative_balance",
+  "pump_section",
+  "petrol_pump",
+  "column_break_2",
+  "warehouse",
+  "stock_entry",
+  "customer_section",
+  "customer",
+  "customer_name",
+  "driver_name",
+  "vehicle_number",
+  "customer_mobile",
+  "column_break_1",
+  "redemption_date",
+  "liters_accumulated",
+  "slip_no"
+ ],
+ "fields": [
+  {
+   "fieldname": "customer_section",
+   "fieldtype": "Section Break",
+   "label": "Customer Details"
+  },
+  {
+   "fieldname": "customer",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Customer ID",
+   "options": "Loyalty Customer",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "customer.customer_name",
+   "fieldname": "customer_name",
+   "fieldtype": "Data",
+   "label": "Customer Name",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "Now",
+   "fieldname": "redemption_date",
+   "fieldtype": "Datetime",
+   "in_list_view": 1,
+   "label": "Redemption Date",
+   "reqd": 1
+  },
+  {
+   "description": "Total loyalty points available from customer (auto-filled)",
+   "fieldname": "liters_accumulated",
+   "fieldtype": "Float",
+   "label": "Available Points (Liters)",
+   "precision": "2",
+   "read_only": 1
+  },
+  {
+   "fieldname": "pump_section",
+   "fieldtype": "Section Break",
+   "label": "Pump & Gift Details"
+  },
+  {
+   "fieldname": "petrol_pump",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Petrol Pump",
+   "options": "Petrol Pump Location",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "warehouse",
+   "fieldtype": "Link",
+   "label": "Warehouse",
+   "options": "Warehouse",
+   "reqd": 1
+  },
+  {
+   "fieldname": "stock_entry",
+   "fieldtype": "Link",
+   "label": "Stock Entry",
+   "options": "Stock Entry",
+   "read_only": 1
+  },
+  {
+   "fieldname": "settings_section",
+   "fieldtype": "Section Break",
+   "label": "Settings"
+  },
+  {
+   "default": "1",
+   "fieldname": "reset_counter",
+   "fieldtype": "Check",
+   "label": "Reset Customer Counter"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Gift Redemption",
+   "print_hide": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "gift_given_by",
+   "fieldtype": "Link",
+   "label": "Gift Given By",
+   "no_copy": 1,
+   "options": "User",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "description": "Allow redemption even if customer doesn't have enough points",
+   "fieldname": "allow_negative_balance",
+   "fieldtype": "Check",
+   "label": "Allow Negative Balance"
+  },
+  {
+   "fieldname": "slip_no",
+   "fieldtype": "Data",
+   "label": "Slip No."
+  },
+  {
+   "fieldname": "gifts_section",
+   "fieldtype": "Section Break",
+   "label": "Gift Items"
+  },
+  {
+   "fieldname": "items",
+   "fieldtype": "Table",
+   "label": "Gift Items",
+   "options": "Gift Redemption Item",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_gifts",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "total_points",
+   "fieldtype": "Float",
+   "label": "Total Points to Redeem",
+   "precision": "2",
+   "read_only": 1
+  },
+  {
+   "fieldname": "customer_mobile",
+   "fieldtype": "Data",
+   "label": "Customer Mobile",
+   "fetch_from": "customer.mobile_number",
+   "read_only": 1
+  },
+  {
+   "fieldname": "vehicle_number",
+   "fieldtype": "Data",
+   "label": "Vehicle Number",
+   "fetch_from": "customer.vehicle_number",
+   "read_only": 1
+  },
+  {
+   "fieldname": "driver_name",
+   "fieldtype": "Data",
+   "label": "Driver Name",
+   "description": "Driver name associated with this gift issue, if applicable."
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2026-01-03 10:20:57.295892",
+ "modified_by": "Administrator",
+ "module": "Customer Loyality Program",
+ "name": "Gift Redemption",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "amend": 1,
+   "cancel": 1,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "cancel": 1,
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "CLM Incharge",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "amend": 1,
+   "cancel": 1,
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Pump Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "amend": 1,
+   "cancel": 1,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Pump Owner",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

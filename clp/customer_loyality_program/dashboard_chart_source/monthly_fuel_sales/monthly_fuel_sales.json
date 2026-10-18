@@ -1,0 +1,13 @@
+{
+ "creation": "2025-12-25 15:25:08.706865",
+ "docstatus": 0,
+ "doctype": "Dashboard Chart Source",
+ "idx": 0,
+ "modified": "2025-12-25 15:25:14.251850",
+ "modified_by": "Administrator",
+ "module": "Customer Loyality Program",
+ "name": "Monthly Fuel Sales",
+ "owner": "Administrator",
+ "source_name": "Monthly Fuel Sales",
+ "timeseries": 1
+}

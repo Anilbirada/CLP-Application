@@ -1,0 +1,113 @@
+{
+ "doctype": "DocType",
+ "name": "Referral Reward Entry",
+ "module": "Customer Loyality Program",
+ "autoname": "format:REF-REWARD-{#####}",
+ "engine": "InnoDB",
+ "track_changes": 1,
+ "allow_rename": 0,
+ "editable_grid": 1,
+ "field_order": [
+  "referrer",
+  "referred_customer",
+  "fuel_purchase_entry",
+  "petrol_pump",
+  "points_awarded",
+  "status",
+  "reward_date",
+  "reversal_reason"
+ ],
+ "fields": [
+  {
+   "fieldname": "referrer",
+   "fieldtype": "Link",
+   "label": "Referrer",
+   "options": "Loyalty Customer",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "referred_customer",
+   "fieldtype": "Link",
+   "label": "Referred Customer",
+   "options": "Loyalty Customer",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "fuel_purchase_entry",
+   "fieldtype": "Link",
+   "label": "Fuel Purchase Entry",
+   "options": "Fuel Purchase Entry",
+   "reqd": 1,
+   "unique": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "petrol_pump",
+   "fieldtype": "Link",
+   "label": "Petrol Pump",
+   "options": "Petrol Pump Location",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "points_awarded",
+   "fieldtype": "Int",
+   "label": "Points Awarded",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Awarded\nReversed",
+   "default": "Awarded",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "reward_date",
+   "fieldtype": "Datetime",
+   "label": "Reward Date",
+   "default": "Now",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "reversal_reason",
+   "fieldtype": "Small Text",
+   "label": "Reversal Reason"
+  }
+ ],
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "report": 1,
+   "export": 1
+  },
+  {
+   "role": "Pump Owner",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "report": 1,
+   "export": 1
+  },
+  {
+   "role": "CLM Incharge",
+   "read": 1,
+   "report": 1,
+   "export": 1
+  },
+  {
+   "role": "Pump Manager",
+   "read": 1,
+   "report": 1
+  }
+ ]
+}

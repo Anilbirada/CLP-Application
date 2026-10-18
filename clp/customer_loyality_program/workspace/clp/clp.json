@@ -1,0 +1,154 @@
+{
+ "charts": [
+  {
+   "chart_name": "Customer Registrations",
+   "label": "Customer Registrations"
+  },
+  {
+   "chart_name": "Gift Redemptions",
+   "label": "Gift Redemptions"
+  },
+  {
+   "chart_name": "Fuel Purchases Count",
+   "label": "Fuel Purchases Count"
+  }
+ ],
+ "content": "[{\"id\":\"Rv5CowLvny\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Customer Loyality Program</span>\",\"col\":12}},{\"id\":\"ZYxKX-YctB\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"3uLuEh3rhX\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Shortcuts &amp; Entry</b></span>\",\"col\":12}},{\"id\":\"FM-EkoayIt\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Quick QR Scanner\",\"col\":3}},{\"id\":\"SMTSVi6Bde\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Fuel Purchase Entry\",\"col\":3}},{\"id\":\"8Fo-qLj-IL\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Gift Redemption\",\"col\":3}},{\"id\":\"-EZV5tSStn\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Customer List\",\"col\":3}},{\"id\":\"AxHWZTpR0v\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"q1mPVZggqE\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Stock &amp; Location</b></span>\",\"col\":12}},{\"id\":\"gZvKkQoJ0A\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Petrol Pump Location\",\"col\":3}},{\"id\":\"L05-ePObju\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"User Pump Settings\",\"col\":3}},{\"id\":\"nYqc0n0KIS\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Add Gift Stocks\",\"col\":3}},{\"id\":\"4nomAv6YZb\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Gift Stock Transfer\",\"col\":3}},{\"id\":\"vlANzQ5_Os\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Reports</b></span>\",\"col\":12}},{\"id\":\"yz3B-I7WSp\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Customer Loyalty Dashboard\",\"col\":3}},{\"id\":\"GT_JsMKybY\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Customer Summary\",\"col\":3}},{\"id\":\"sNnL_qOTrg\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Pump Stock Summary\",\"col\":3}},{\"id\":\"CU8XYVLOx3\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Gift Redemption Summary\",\"col\":3}},{\"id\":\"Y6jygRKbuV\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"QnRhnCojmz\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Total Gifts Distributed\",\"col\":3}},{\"id\":\"J9Scv3vkfb\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Total Liters Sold\",\"col\":3}},{\"id\":\"dpqdG0OQ38\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Total Active Customers\",\"col\":3}},{\"id\":\"o1maa7kNef\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Total Fuel Purchases\",\"col\":3}},{\"id\":\"htJS_RvGSt\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"KhD15-crkQ\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Gift Redemptions\",\"col\":12}},{\"id\":\"bgSnR0kGsU\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Customer Registrations\",\"col\":6}},{\"id\":\"pqWaZyrvqN\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Fuel Purchases Count\",\"col\":6}},{\"id\":\"SLeo3QK5Li\",\"type\":\"spacer\",\"data\":{\"col\":12}}]",
+ "creation": "2026-01-02 01:10:45.097526",
+ "custom_blocks": [],
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "for_user": "",
+ "hide_custom": 0,
+ "icon": "color-review-points",
+ "idx": 0,
+ "indicator_color": "",
+ "is_hidden": 0,
+ "label": "CLP",
+ "links": [],
+ "modified": "2026-01-04 23:33:23.961159",
+ "modified_by": "Administrator",
+ "module": "Customer Loyality Program",
+ "name": "CLP",
+ "number_cards": [
+  {
+   "label": "Total Liters Sold",
+   "number_card_name": "Total Liters Sold"
+  },
+  {
+   "label": "Total Active Customers",
+   "number_card_name": "Total Active Customers"
+  },
+  {
+   "label": "Total Fuel Purchases",
+   "number_card_name": "Total Fuel Purchases"
+  },
+  {
+   "label": "Total Gifts Distributed",
+   "number_card_name": "Total Gifts Distributed"
+  }
+ ],
+ "owner": "Administrator",
+ "parent_page": "",
+ "public": 1,
+ "quick_lists": [],
+ "roles": [],
+ "sequence_id": 33.0,
+ "shortcuts": [
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Quick QR Scanner",
+   "link_to": "clp-qr-scanner",
+   "type": "Page"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "User Pump Settings",
+   "link_to": "User Pump Settings",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Customer Summary",
+   "link_to": "Customer Summary",
+   "report_ref_doctype": "Loyalty Customer",
+   "type": "Report"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Add Gift Stocks",
+   "link_to": "gift-stock",
+   "type": "Page"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "New",
+   "label": "Gift Stock Transfer",
+   "link_to": "Gift Stock Request",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "New",
+   "label": "Fuel Purchase Entry",
+   "link_to": "Fuel Purchase Entry",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Customer Loyalty Dashboard",
+   "link_to": "Customer Loyalty Dashboard",
+   "report_ref_doctype": "Loyalty Customer",
+   "type": "Report"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Gift Redemption Summary",
+   "link_to": "Gift Redemption Summary",
+   "report_ref_doctype": "Gift Redemption",
+   "type": "Report"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Customer List",
+   "link_to": "Loyalty Customer",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Petrol Pump Location",
+   "link_to": "Petrol Pump Location",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Pump Stock Summary",
+   "link_to": "Pump-wise Gift Stock",
+   "report_ref_doctype": "Petrol Pump Location",
+   "type": "Report"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "New",
+   "label": "Gift Redemption",
+   "link_to": "Gift Redemption",
+   "stats_filter": "[]",
+   "type": "DocType"
+  }
+ ],
+ "title": "CLP"
+}
