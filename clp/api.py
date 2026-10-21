@@ -851,15 +851,16 @@ Keep fueling with us! ⛽"""
 
 @frappe.whitelist(allow_guest=True)
 def check_loyalty_points(vehicle=None, mobile=None):
-    """Public API to check loyalty points - accepts either vehicle or mobile number"""
-    
-    # Clean inputs if provided
+    """Public API to check loyalty points - accepts vehicle, mobile number, or both."""
     import re
     if vehicle:
-        vehicle = re.sub(r'[\s\-]+', '', vehicle).upper()
+        vehicle = re.sub(r'[\s\-]+', '', str(vehicle)).upper()
     if mobile:
-        mobile = re.sub(r'[\s\-]+', '', mobile)
-    
+        mobile = re.sub(r'[\s\-]+', '', str(mobile))
+        mobile = re.sub(r'\D', '', mobile)
+        if len(mobile) > 10:
+            mobile = mobile[-10:]
+
     result = {
         'found': False,
         'error': '',
@@ -867,39 +868,49 @@ def check_loyalty_points(vehicle=None, mobile=None):
         'purchases': [],
         'redemptions': []
     }
-    
+
+    if not vehicle and not mobile:
+        result['error'] = "Please provide your vehicle number or mobile number."
+        return result
+
     try:
-        # Validate that at least one parameter is provided
-        if not vehicle or not mobile:
-            result['error'] = "Please provide both vehicle number and mobile number, or use your secure QR link"
-            return result
+        conditions = []
+        params = []
 
-        # Manual lookup requires BOTH identifiers to avoid exposing a customer account
-        # to anyone who only knows a vehicle number or mobile number.
-        conditions = ["REPLACE(REPLACE(UPPER(vehicle_number), ' ', ''), '-', '') = %s", "REPLACE(mobile_number, ' ', '') = %s"]
-        params = [vehicle, mobile]
+        if vehicle and mobile:
+            conditions.append("""(
+                REPLACE(REPLACE(UPPER(vehicle_number), ' ', ''), '-', '') = %s 
+                OR RIGHT(REPLACE(REPLACE(mobile_number, ' ', ''), '-', ''), 10) = %s
+            )""")
+            params.extend([vehicle, mobile])
+        elif vehicle:
+            conditions.append("REPLACE(REPLACE(UPPER(vehicle_number), ' ', ''), '-', '') = %s")
+            params.append(vehicle)
+        elif mobile:
+            conditions.append("RIGHT(REPLACE(REPLACE(mobile_number, ' ', ''), '-', ''), 10) = %s")
+            params.append(mobile)
 
-        
         where_clause = " AND ".join(conditions)
-        
+
         customers = frappe.db.sql(f"""
             SELECT name, customer_name, vehicle_number, mobile_number,
                    current_cycle_liters, total_liters_purchased, total_gifts_received,
                    registration_date, referral_points_balance
             FROM `tabLoyalty Customer`
             WHERE {where_clause}
+            ORDER BY current_cycle_liters DESC
             LIMIT 1
         """, tuple(params), as_dict=1)
-        
+
         if not customers:
             if vehicle and mobile:
-                result['error'] = f"Customer not found with vehicle {vehicle} or mobile {mobile}"
+                result['error'] = f"No customer found matching vehicle '{vehicle}' or mobile '{mobile}'."
             elif vehicle:
-                result['error'] = f"Customer not found with vehicle number {vehicle}"
+                result['error'] = f"No customer found with vehicle number '{vehicle}'."
             else:
-                result['error'] = f"Customer not found with mobile number {mobile}"
+                result['error'] = f"No customer found with mobile number '{mobile}'."
             return result
-        
+
         customer = customers[0]
         result['found'] = True
         result['customer'] = {

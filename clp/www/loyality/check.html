@@ -517,7 +517,7 @@
 
                 <h3><i class="fas fa-search"></i> Check Your Points</h3>
                 <p style="text-align: center; color: #6c757d; margin-bottom: 20px; font-size: 14px;">
-                    Enter both your vehicle number and mobile number to check points, or scan your secure QR code
+                    Enter your vehicle number OR mobile number to check points, or scan your secure QR code
                 </p>
                 <form id="searchForm">
                     <div class="form-group">
@@ -629,15 +629,13 @@
             document.getElementById('mobileError').style.display = 'none';
             
             // Validation: At least one field must be filled
-            if (!vehicle || !mobile) {
-                document.getElementById('vehicleError').textContent = 'Vehicle number is required';
-                document.getElementById('mobileError').textContent = 'Mobile number is required';
-                document.getElementById('vehicleError').style.display = vehicle ? 'none' : 'block';
-                document.getElementById('mobileError').style.display = mobile ? 'none' : 'block';
+            if (!vehicle && !mobile) {
+                document.getElementById('vehicleError').textContent = 'Please enter your vehicle number or mobile number';
+                document.getElementById('vehicleError').style.display = 'block';
                 return;
             }
             
-            // Validate mobile number
+            // Validate mobile number if provided
             if (mobile && mobile.length !== 10) {
                 document.getElementById('mobileError').textContent = 'Mobile number must be 10 digits';
                 document.getElementById('mobileError').style.display = 'block';
