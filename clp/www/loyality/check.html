@@ -3,600 +3,830 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Check your loyalty points at N.K Sindol Petroleum">
-    <title>Check Loyalty Points - N.K Sindol Petroleum</title>
+    <meta name="description" content="N.K Sindol Petroleum - Customer Loyalty Rewards Club">
+    <title>Loyalty Club Portal | N.K Sindol Petroleum</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        :root {
+            --primary-navy: #0f172a;
+            --secondary-navy: #1e293b;
+            --accent-blue: #2563eb;
+            --accent-blue-hover: #1d4ed8;
+            --emerald: #059669;
+            --emerald-light: #ecfdf5;
+            --amber: #d97706;
+            --amber-light: #fffbeb;
+            --danger: #dc2626;
+            --slate-50: #f8fafc;
+            --slate-100: #f1f5f9;
+            --slate-200: #e2e8f0;
+            --slate-400: #94a3b8;
+            --slate-600: #475569;
+            --slate-700: #334155;
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 18px;
+            --shadow-sm: 0 1px 3px rgba(15,23,42,0.06);
+            --shadow-md: 0 4px 12px -2px rgba(15,23,42,0.08);
+            --shadow-lg: 0 12px 28px -6px rgba(15,23,42,0.12);
+        }
+
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
         }
-        
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--slate-50);
+            color: var(--primary-navy);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            -webkit-font-smoothing: antialiased;
         }
-        
-        /* Header */
-        .header {
-            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
-            color: white;
-            padding: 20px 0;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+
+        /* Top Header */
+        .top-nav {
+            background-color: var(--primary-navy);
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            padding: 16px 0;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            backdrop-filter: blur(10px);
         }
-        
-        .header-content {
-            max-width: 1200px;
+
+        .nav-container {
+            max-width: 1100px;
             margin: 0 auto;
-            padding: 0 20px;
+            padding: 0 24px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            flex-wrap: wrap;
-            gap: 15px;
         }
-        
-        .logo {
+
+        .brand-logo {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 14px;
+            text-decoration: none;
+            color: white;
         }
-        
-        .logo i {
-            font-size: 36px;
-            color: #43e97b;
+
+        .brand-icon {
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, #2563eb, #10b981);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: white;
+            box-shadow: 0 4px 12px rgba(37,99,235,0.3);
         }
-        
-        .logo-text h1 {
-            font-size: 24px;
+
+        .brand-text h1 {
+            font-size: 19px;
             font-weight: 700;
-            letter-spacing: 0.5px;
+            letter-spacing: -0.02em;
+            color: white;
+            line-height: 1.2;
         }
-        
-        .logo-text p {
-            font-size: 13px;
-            opacity: 0.85;
-            font-style: italic;
+
+        .brand-text p {
+            font-size: 12px;
+            color: #94a3b8;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            font-weight: 600;
         }
-        
-        .header-contact {
+
+        .nav-badge {
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: #34d399;
+            font-size: 12.5px;
+            font-weight: 600;
+            padding: 6px 14px;
+            border-radius: 9999px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Main Container */
+        .main-wrapper {
+            flex: 1;
+            max-width: 900px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 32px 20px 60px 20px;
+        }
+
+        /* Hero Intro */
+        .hero-banner {
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.90) 0%, rgba(30, 41, 59, 0.85) 100%),
+                        url('/assets/clp/images/indian_petrol_pump_bg.jpg') no-repeat center center !important;
+            background-size: cover !important;
+            border-radius: var(--radius-lg);
+            padding: 36px 30px;
+            color: white;
+            margin-bottom: 24px;
+            border: 1px solid rgba(255,255,255,0.12);
+            box-shadow: var(--shadow-md);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-banner::after {
+            content: "";
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(37,99,235,0.18) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .hero-banner h2 {
+            font-size: 26px;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .hero-banner p {
+            font-size: 14.5px;
+            color: #cbd5e1;
+            line-height: 1.5;
+            max-width: 600px;
+        }
+
+        /* Scheme Highlight Badges */
+        .scheme-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 14px;
+            margin-top: 22px;
+        }
+
+        .scheme-item {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-md);
+            padding: 14px 16px;
+            backdrop-filter: blur(4px);
+        }
+
+        .scheme-item-title {
+            font-size: 13.5px;
+            font-weight: 700;
+            color: #60a5fa;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .scheme-item-desc {
+            font-size: 12.5px;
+            color: #94a3b8;
+            line-height: 1.4;
+        }
+
+        /* Search Card */
+        .search-container {
+            background: #ffffff;
+            border: 1px solid var(--slate-200);
+            border-radius: var(--radius-lg);
+            padding: 32px 28px;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 28px;
+        }
+
+        .search-title {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .search-title h3 {
+            font-size: 21px;
+            font-weight: 700;
+            color: var(--primary-navy);
+            letter-spacing: -0.02em;
+            margin-bottom: 6px;
+        }
+
+        .search-title p {
+            font-size: 13.5px;
+            color: var(--slate-600);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 18px;
+        }
+
+        .form-field {
             display: flex;
             flex-direction: column;
-            gap: 5px;
-            font-size: 14px;
+            gap: 6px;
         }
-        
-        .header-contact a {
-            color: #43e97b;
-            text-decoration: none;
-            transition: opacity 0.3s;
-        }
-        
-        .header-contact a:hover {
-            opacity: 0.8;
-        }
-        
-        /* Main Content */
-        .main-content {
-            flex: 1;
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 30px 20px;
-            width: 100%;
-        }
-        
-        .hero-section {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 40px 30px;
-            border-radius: 15px;
-            color: white;
-            text-align: center;
-            margin-bottom: 30px;
-            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
-        }
-        
-        .hero-section h2 {
-            font-size: 32px;
-            margin-bottom: 10px;
-            font-weight: 700;
-        }
-        
-        .hero-section p {
-            font-size: 16px;
-            opacity: 0.95;
-        }
-        
-        .search-card {
-            background: white;
-            padding: 35px;
-            border-radius: 15px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-            margin-bottom: 30px;
-        }
-        
-        .search-card h3 {
-            color: #2c3e50;
-            margin-bottom: 25px;
-            font-size: 22px;
-            text-align: center;
-        }
-        
-        .form-group {
-            margin-bottom: 20px;
-        }
-        
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
+
+        .field-label {
+            font-size: 13px;
             font-weight: 600;
-            color: #2c3e50;
-            font-size: 14px;
+            color: var(--slate-700);
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
-        
-        .form-group label i {
-            color: #667eea;
-            margin-right: 8px;
+
+        .input-box {
+            position: relative;
+            display: flex;
+            align-items: center;
         }
-        
-        .form-group input {
-            width: 100%;
-            padding: 14px 18px;
-            border: 2px solid #e0e6ed;
-            border-radius: 8px;
+
+        .input-box i {
+            position: absolute;
+            left: 14px;
+            color: var(--slate-400);
             font-size: 15px;
-            transition: border-color 0.3s;
         }
-        
-        .form-group input:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-        
-        .btn-primary {
+
+        .input-box input {
             width: 100%;
-            padding: 16px;
-            background: linear-gradient(135deg, #43e97b 0%, #38d66a 100%);
-            color: white;
+            height: 46px;
+            padding: 10px 14px 10px 42px;
+            border: 1.5px solid var(--slate-200);
+            border-radius: var(--radius-sm);
+            font-size: 14.5px;
+            font-family: inherit;
+            color: var(--primary-navy);
+            background: #ffffff;
+            transition: all 0.2s ease;
+        }
+
+        .input-box input:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 3.5px rgba(37,99,235,0.14);
+        }
+
+        .input-box input::placeholder {
+            color: #94a3b8;
+        }
+
+        .or-divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            margin: 4px 0;
+            color: var(--slate-400);
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+        }
+
+        .or-divider::before,
+        .or-divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px dashed var(--slate-200);
+        }
+
+        .or-divider span {
+            padding: 0 12px;
+        }
+
+        .field-error {
+            color: var(--danger);
+            font-size: 12.5px;
+            font-weight: 500;
+            display: none;
+            margin-top: 4px;
+        }
+
+        .submit-btn {
+            background-color: var(--accent-blue);
+            color: #ffffff;
             border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 17px;
+            border-radius: var(--radius-sm);
+            height: 48px;
+            font-size: 15px;
             font-weight: 600;
-            transition: transform 0.2s, box-shadow 0.2s;
-            box-shadow: 0 4px 15px rgba(67, 233, 123, 0.3);
+            font-family: inherit;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 6px rgba(37,99,235,0.25);
+            margin-top: 6px;
         }
-        
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(67, 233, 123, 0.4);
+
+        .submit-btn:hover {
+            background-color: var(--accent-blue-hover);
+            box-shadow: 0 4px 12px rgba(37,99,235,0.35);
+            transform: translateY(-1px);
         }
-        
-        .btn-primary:active {
+
+        .submit-btn:active {
             transform: translateY(0);
         }
-        
-        .card {
-            background: white;
-            padding: 30px;
-            margin: 25px 0;
-            border-radius: 15px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-        }
-        
-        .card h3 {
-            color: #2c3e50;
-            margin-bottom: 20px;
-            font-size: 24px;
-        }
-        
-        .card h4 {
-            color: #667eea;
-            margin-bottom: 20px;
-            font-size: 20px;
-            border-bottom: 2px solid #f0f3f7;
-            padding-bottom: 12px;
-        }
-        
-        .customer-info p {
-            margin: 10px 0;
-            color: #6c757d;
-            font-size: 15px;
-        }
-        
-        .customer-info strong {
-            color: #2c3e50;
-        }
-        
-        .points-display {
+
+        /* Loading State */
+        .loading-state {
             text-align: center;
-            padding: 35px 25px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 12px;
-            color: white;
-            margin: 25px 0;
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+            padding: 40px 20px;
+            color: var(--accent-blue);
         }
-        
-        .points-label {
-            font-size: 14px;
-            opacity: 0.9;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            margin-bottom: 10px;
-        }
-        
-        .points-value {
-            font-size: 64px;
-            font-weight: bold;
-            margin: 15px 0;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
-        }
-        
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-top: 25px;
-        }
-        
-        .stat-box {
-            text-align: center;
-            padding: 25px 20px;
-            background: #f8f9fa;
-            border-radius: 12px;
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
-        
-        .stat-box:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-        }
-        
-        .stat-value {
+
+        .loading-state i {
             font-size: 36px;
-            font-weight: bold;
-            color: #667eea;
-            margin-bottom: 8px;
-        }
-        
-        .stat-value.green {
-            color: #43e97b;
-        }
-        
-        .stat-label {
-            color: #6c757d;
-            font-size: 13px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        
-        .transaction-item {
-            padding: 18px;
-            margin: 12px 0;
-            background: #f8f9fa;
-            border-radius: 10px;
-            border-left: 4px solid #667eea;
-            transition: all 0.3s;
-        }
-        
-        .transaction-item:hover {
-            background: #e9ecef;
-            transform: translateX(5px);
-        }
-        
-        .transaction-item.redemption {
-            background: #fff8f0;
-            border-left-color: #ff9800;
-        }
-        
-        .transaction-date {
-            font-weight: 600;
-            color: #667eea;
-            font-size: 16px;
-            margin-bottom: 8px;
-        }
-        
-        .transaction-details {
-            color: #6c757d;
-            font-size: 14px;
-            line-height: 1.6;
-        }
-        
-        .gift-badge {
-            display: inline-block;
-            margin: 4px 6px 4px 0;
-            padding: 6px 14px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            border-radius: 6px;
-            font-size: 13px;
-            font-weight: 600;
-        }
-        
-        .badge {
-            display: inline-block;
-            padding: 6px 14px;
-            border-radius: 6px;
-            font-weight: 600;
-            font-size: 14px;
-        }
-        
-        .badge-success {
-            background: #43e97b;
-            color: white;
-        }
-        
-        .badge-warning {
-            background: #ff9800;
-            color: white;
-        }
-        
-        .error-box {
-            background: #fff3cd;
-            padding: 25px;
-            border-radius: 12px;
-            color: #856404;
-            border: 2px solid #ffc107;
-            text-align: center;
-        }
-        
-        .error-box i {
-            font-size: 48px;
-            margin-bottom: 15px;
-            color: #ff9800;
-        }
-        
-        .loading {
-            text-align: center;
-            padding: 50px;
-            color: #667eea;
-        }
-        
-        .loading i {
-            font-size: 48px;
             animation: spin 1s linear infinite;
+            margin-bottom: 12px;
         }
-        
+
+        .loading-state h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--slate-700);
+        }
+
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-        
-        .hidden {
-            display: none;
+
+        /* Error Box */
+        .error-alert {
+            background-color: #fef2f2;
+            border: 1px solid #fecaca;
+            border-radius: var(--radius-md);
+            padding: 24px;
+            text-align: center;
+            color: #991b1b;
+            margin-bottom: 24px;
         }
-        
-        /* Simple Footer */
-        .footer {
-            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+
+        .error-alert i {
+            font-size: 36px;
+            color: var(--danger);
+            margin-bottom: 10px;
+        }
+
+        .error-alert h3 {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* ----------------------------------------------------------------------
+           DIGITAL VIP FUEL LOYALTY CARD (Results Section)
+           ---------------------------------------------------------------------- */
+        .vip-loyalty-card {
+            background: linear-gradient(145deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: var(--radius-lg);
+            padding: 32px 28px;
             color: white;
-            padding: 30px 20px;
-            margin-top: 50px;
+            box-shadow: 0 20px 40px -10px rgba(15, 23, 42, 0.4);
+            margin-bottom: 28px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .vip-loyalty-card::before {
+            content: "";
+            position: absolute;
+            top: -20%;
+            right: -10%;
+            width: 250px;
+            height: 250px;
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.25) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .card-top-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 22px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .customer-meta h3 {
+            font-size: 24px;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .member-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: rgba(255,255,255,0.1);
+            padding: 4px 10px;
+            border-radius: 9999px;
+            font-size: 11.5px;
+            color: #94a3b8;
+            margin-top: 4px;
+        }
+
+        .vehicle-license-plate {
+            background: #ffcc00;
+            color: #000000;
+            font-family: 'Space Grotesk', monospace;
+            font-size: 15px;
+            font-weight: 700;
+            padding: 5px 14px;
+            border-radius: 6px;
+            letter-spacing: 0.08em;
+            border: 2px solid #000000;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            text-transform: uppercase;
+        }
+
+        /* Points Hero Box */
+        .points-box {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: var(--radius-md);
+            padding: 24px;
+            text-align: center;
+            margin-bottom: 22px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .points-caption {
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: #94a3b8;
+            margin-bottom: 6px;
+        }
+
+        .points-number {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 54px;
+            font-weight: 700;
+            color: #34d399;
+            line-height: 1.1;
+            letter-spacing: -0.03em;
+            text-shadow: 0 0 30px rgba(52, 211, 153, 0.4);
+        }
+
+        .points-unit {
+            font-size: 13.5px;
+            color: #94a3b8;
+            margin-top: 4px;
+            font-weight: 500;
+        }
+
+        /* Customer Stats Grid */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .stat-cell {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: var(--radius-sm);
+            padding: 14px 12px;
             text-align: center;
         }
-        
-        .footer-content {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        
-        .footer-content p {
-            font-size: 15px;
-            margin: 8px 0;
-            color: rgba(255,255,255,0.9);
-        }
-        
-        .footer-content .brand {
-            color: #43e97b;
+
+        .stat-num {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 20px;
             font-weight: 700;
-            font-size: 16px;
+            color: #ffffff;
+            margin-bottom: 2px;
         }
-        
-        .footer-content a {
-            color: #43e97b;
+
+        .stat-cell.green .stat-num {
+            color: #34d399;
+        }
+
+        .stat-title {
+            font-size: 11px;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 600;
+        }
+
+        /* ----------------------------------------------------------------------
+           ACTIVITY SECTION (Transactions & Redemptions)
+           ---------------------------------------------------------------------- */
+        .activity-card {
+            background: #ffffff;
+            border: 1px solid var(--slate-200);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 20px;
+        }
+
+        .activity-card h4 {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--primary-navy);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 1px solid var(--slate-100);
+            padding-bottom: 12px;
+        }
+
+        .tx-item {
+            padding: 14px 16px;
+            border-radius: var(--radius-sm);
+            background: var(--slate-50);
+            border: 1px solid var(--slate-200);
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            transition: all 0.15s ease;
+        }
+
+        .tx-item:hover {
+            background: #ffffff;
+            border-color: var(--slate-300);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+
+        .tx-date {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--slate-400);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-bottom: 3px;
+        }
+
+        .tx-details {
+            font-size: 13.5px;
+            font-weight: 500;
+            color: var(--slate-700);
+        }
+
+        .badge-points-plus {
+            background-color: var(--emerald-light);
+            color: var(--emerald);
+            border: 1px solid #a7f3d0;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 13px;
+            font-weight: 700;
+            padding: 4px 12px;
+            border-radius: 9999px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .badge-points-minus {
+            background-color: var(--amber-light);
+            color: var(--amber);
+            border: 1px solid #fde68a;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 13px;
+            font-weight: 700;
+            padding: 4px 12px;
+            border-radius: 9999px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .gift-tag {
+            background-color: var(--slate-100);
+            color: var(--slate-700);
+            border: 1px solid var(--slate-200);
+            padding: 3px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            margin: 4px 4px 0 0;
+        }
+
+        /* Footer */
+        .site-footer {
+            background-color: var(--primary-navy);
+            color: #94a3b8;
+            padding: 32px 20px;
+            text-align: center;
+            font-size: 13px;
+            border-top: 1px solid rgba(255,255,255,0.06);
+            margin-top: auto;
+        }
+
+        .site-footer a {
+            color: #38bdf8;
             text-decoration: none;
             font-weight: 600;
-            transition: opacity 0.3s;
         }
-        
-        .footer-content a:hover {
-            opacity: 0.8;
+
+        .site-footer a:hover {
+            text-decoration: underline;
         }
-        
-        /* Responsive */
-        @media (max-width: 768px) {
-            .header-content {
-                flex-direction: column;
-                text-align: center;
-            }
-            
-            .logo-text h1 {
-                font-size: 20px;
-            }
-            
-            .hero-section h2 {
-                font-size: 24px;
-            }
-            
-            .search-card {
-                padding: 25px 20px;
-            }
-            
-            .points-value {
-                font-size: 48px;
-            }
-            
-            .stat-value {
-                font-size: 28px;
-            }
-            
-            .stats-grid {
+
+        /* Responsive Breakpoints */
+        @media (max-width: 640px) {
+            .stats-row {
                 grid-template-columns: 1fr;
             }
-        }
-        
-        @media (max-width: 480px) {
-            .logo i {
-                font-size: 28px;
+            .card-top-row {
+                flex-direction: column;
+                gap: 12px;
             }
-            
-            .hero-section {
-                padding: 30px 20px;
-            }
-            
-            .points-value {
+            .points-number {
                 font-size: 42px;
+            }
+            .hero-banner {
+                padding: 24px 20px;
+            }
+            .search-container {
+                padding: 24px 18px;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Header -->
-    <header class="header">
-        <div class="header-content">
-            <div class="logo">
-                <i class="fas fa-gas-pump"></i>
-                <div class="logo-text">
-                    <h1>N.K Sindol Petroleum</h1>
-                    <p>Your Trusted Fuel Partner</p>
+    <!-- Top Navigation -->
+    <header class="top-nav">
+        <div class="nav-container">
+            <a href="#" class="brand-logo">
+                <div class="brand-icon">
+                    <i class="fas fa-gas-pump"></i>
                 </div>
+                <div class="brand-text">
+                    <h1>N.K Sindol Petroleum</h1>
+                    <p>Customer Loyalty Club</p>
+                </div>
+            </a>
+            <div class="nav-badge">
+                <i class="fas fa-shield-alt"></i> Official Rewards
             </div>
         </div>
     </header>
 
-    <!-- Main Content -->
-    <main class="main-content">
-        <div class="hero-section">
-            <h2><i class="fas fa-gift"></i> Loyalty Rewards Program</h2>
-            <p>Check your loyalty points and transaction history instantly</p>
-        </div>
-
-        <!-- Feature 25: Petrol Pump & Scheme Details -->
-        <div class="scheme-card" style="background: white; border-radius: 15px; padding: 25px; margin-bottom: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.06); border-top: 4px solid #43e97b;">
-            <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-bottom: 15px;">
-                <h3 style="color: #2c3e50; font-size: 19px; display: flex; align-items: center; gap: 8px;">
-                    <i class="fas fa-award" style="color: #f59e0b;"></i> Active Loyalty Schemes & Benefits
-                </h3>
-                <span style="background: #ecfdf5; color: #059669; font-weight: 600; font-size: 13px; padding: 4px 12px; border-radius: 20px;">
-                    ✓ Active Scheme
-                </span>
-            </div>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px;">
-                <div style="background: #f8fafc; padding: 15px; border-radius: 10px; border: 1px solid #e2e8f0;">
-                    <div style="color: #2563eb; font-weight: 700; font-size: 15px; margin-bottom: 4px;">
-                        <i class="fas fa-gas-pump"></i> Refuel & Earn Points
+    <!-- Main Container -->
+    <main class="main-wrapper">
+        <!-- Hero Section -->
+        <div class="hero-banner">
+            <h2><i class="fas fa-award" style="color: #facc15;"></i> Welcome to Customer Rewards</h2>
+            <p>Refuel at any of our participating petrol pumps to accumulate loyalty liters, earn milestone rewards, and redeem premium gifts instantly.</p>
+            
+            <div class="scheme-cards">
+                <div class="scheme-item">
+                    <div class="scheme-item-title">
+                        <i class="fas fa-gas-pump"></i> 1 Liter = 1 Point
                     </div>
-                    <div style="color: #64748b; font-size: 13px;">
-                        Earn 1 Loyalty Point for every 1 Liter of fuel refueled at any of our participating pumps.
+                    <div class="scheme-item-desc">
+                        Every single liter of Petrol or Diesel refueled earns you 1 verified Loyalty Point.
                     </div>
                 </div>
-                <div style="background: #f8fafc; padding: 15px; border-radius: 10px; border: 1px solid #e2e8f0;">
-                    <div style="color: #10b981; font-weight: 700; font-size: 15px; margin-bottom: 4px;">
-                        <i class="fas fa-gift"></i> Milestone Rewards
+                <div class="scheme-item">
+                    <div class="scheme-item-title">
+                        <i class="fas fa-gift"></i> Milestone Gifts
                     </div>
-                    <div style="color: #64748b; font-size: 13px;">
-                        Redeem points for household gifts, smart accessories, and vehicle maintenance rewards instantly.
+                    <div class="scheme-item-desc">
+                        Redeem accumulated points for household gifts, smart accessories, and vehicle items.
                     </div>
                 </div>
-                <div style="background: #f8fafc; padding: 15px; border-radius: 10px; border: 1px solid #e2e8f0;">
-                    <div style="color: #8b5cf6; font-weight: 700; font-size: 15px; margin-bottom: 4px;">
+                <div class="scheme-item">
+                    <div class="scheme-item-title">
                         <i class="fas fa-user-friends"></i> Referral Bonus
                     </div>
-                    <div style="color: #64748b; font-size: 13px;">
-                        Share your registered mobile number with friends to earn bonus referral points on every refuel they make!
+                    <div class="scheme-item-desc">
+                        Introduce friends with your mobile number to earn bonus referral points on every visit!
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="search-card">
-
-                <h3><i class="fas fa-search"></i> Check Your Points</h3>
-                <p style="text-align: center; color: #6c757d; margin-bottom: 20px; font-size: 14px;">
-                    Enter your vehicle number OR mobile number to check points, or scan your secure QR code
-                </p>
-                <form id="searchForm">
-                    <div class="form-group">
-                        <label for="vehicle">
-                            <i class="fas fa-car"></i> Vehicle Number
-                        </label>
-                        <input type="text" id="vehicle" placeholder="e.g., DL01AB1234">
-                        <span id="vehicleError" style="color: #dc3545; font-size: 13px; display: none; margin-top: 5px;">
-                            <i class="fas fa-exclamation-circle"></i> Enter at least one field
-                        </span>
-                    </div>
-                    
-                    <div style="text-align: center; margin: 15px 0; color: #6c757d; font-weight: 600;">
-                        OR
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="mobile">
-                            <i class="fas fa-mobile-alt"></i> Mobile Number
-                        </label>
-                        <input type="tel" id="mobile" placeholder="Enter 10 digit mobile number" pattern="[0-9]{10}" maxlength="10">
-                        <span id="mobileError" style="color: #dc3545; font-size: 13px; display: none; margin-top: 5px;">
-                            <i class="fas fa-exclamation-circle"></i> Enter at least one field
-                        </span>
-                    </div>
-                    
-                    <button type="submit" class="btn-primary">
-                        <i class="fas fa-search"></i> Check My Points
-                    </button>
-                </form>
+        <!-- Search Form Card -->
+        <div class="search-container">
+            <div class="search-title">
+                <h3><i class="fas fa-search" style="color: var(--accent-blue);"></i> Check Your Points Balance</h3>
+                <p>Enter your 10-digit mobile number OR your vehicle registration number</p>
             </div>
 
+            <form id="searchForm">
+                <div class="form-grid">
+                    <div class="form-field">
+                        <label for="vehicle" class="field-label">
+                            <i class="fas fa-car" style="color: var(--accent-blue);"></i> Vehicle Registration Number
+                        </label>
+                        <div class="input-box">
+                            <i class="fas fa-car"></i>
+                            <input type="text" id="vehicle" placeholder="e.g. MH04GF6292 or DL01AB1234" autocomplete="off">
+                        </div>
+                        <span id="vehicleError" class="field-error">
+                            <i class="fas fa-exclamation-circle"></i> Please enter your vehicle number or mobile number
+                        </span>
+                    </div>
 
-        <div id="loading" class="loading hidden">
-            <i class="fas fa-spinner"></i>
-            <h3>Loading your data...</h3>
+                    <div class="or-divider">
+                        <span>OR</span>
+                    </div>
+
+                    <div class="form-field">
+                        <label for="mobile" class="field-label">
+                            <i class="fas fa-mobile-alt" style="color: var(--accent-blue);"></i> Registered Mobile Number
+                        </label>
+                        <div class="input-box">
+                            <i class="fas fa-phone"></i>
+                            <input type="tel" id="mobile" placeholder="e.g. 8600862791 (10 digits)" pattern="[0-9]{10}" maxlength="10">
+                        </div>
+                        <span id="mobileError" class="field-error">
+                            <i class="fas fa-exclamation-circle"></i> Mobile number must be 10 digits
+                        </span>
+                    </div>
+
+                    <button type="submit" class="submit-btn">
+                        <i class="fas fa-search"></i> Check My Loyalty Points
+                    </button>
+                </div>
+            </form>
         </div>
 
-        <div id="error" class="error-box hidden">
+        <!-- Loading State -->
+        <div id="loading" class="loading-state hidden">
+            <i class="fas fa-spinner"></i>
+            <h3>Retrieving your customer records...</h3>
+        </div>
+
+        <!-- Error State -->
+        <div id="error" class="error-alert hidden">
             <i class="fas fa-exclamation-triangle"></i>
-            <h3>Not Found</h3>
+            <h3>Customer Record Not Found</h3>
             <p id="errorMessage"></p>
         </div>
 
+        <!-- Dynamic Results Container -->
         <div id="results" class="hidden"></div>
     </main>
 
-    <!-- Simple Footer -->
-    <footer class="footer">
-        <div class="footer-content">
-            <p>
-                <i class="fas fa-code"></i> Powered by <span class="brand">ABM Tech Pvt. Ltd.</span>
-            </p>
-            <p style="font-size: 14px; opacity: 0.85; margin-top: 5px;">
-                <a href="https://abmtech.in" target="_blank" rel="noopener noreferrer">
-                    <i class="fas fa-external-link-alt"></i> Visit abmtech.in
-                </a>
-            </p>
-            <p style="font-size: 13px; opacity: 0.7; margin-top: 10px;">
-                © <span id="currentYear"></span> N.K Sindol Petroleum. All rights reserved.
-            </p>
-        </div>
+    <!-- Footer -->
+    <footer class="site-footer">
+        <p><strong>N.K Sindol Petroleum</strong> — Trusted Fuel & Customer Loyalty Partner</p>
+        <p style="margin-top: 6px; font-size: 12px; opacity: 0.8;">
+            Powered by <a href="https://abmtech.in" target="_blank" rel="noopener noreferrer">ABM Tech Pvt. Ltd.</a> | © <span id="currentYear"></span> All rights reserved.
+        </p>
     </footer>
 
     <script>
-        // Set current year
         document.getElementById('currentYear').textContent = new Date().getFullYear();
 
-        // QR links use a high-entropy token. When present, load only the customer
-        // associated with that token; do not ask the customer to enter identifiers.
+        // High-entropy token portal support
         (async function loadTokenPortal() {
             const token = new URLSearchParams(window.location.search).get('token');
             if (!token) return;
             document.getElementById('searchForm').style.display = 'none';
             document.getElementById('loading').classList.remove('hidden');
             try {
-                const response = await fetch('/api/method/clp.api.get_customer_portal_by_token', {
-                    method: 'POST', headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({token})
+                const response = await fetch(`/api/method/clp.api.get_customer_portal_by_token?token=${encodeURIComponent(token)}`, {
+                    method: 'GET',
+                    headers: {'Accept': 'application/json'}
                 });
                 const data = await response.json();
                 document.getElementById('loading').classList.add('hidden');
@@ -607,207 +837,249 @@
                 showError('Unable to load customer history. Please try again later.');
             }
         })();
-        
-        // Form input handlers
-        document.getElementById('vehicle').addEventListener('input', function(e) {
+
+        // Input sanitization
+        document.getElementById('vehicle').addEventListener('input', function() {
             this.value = this.value.toUpperCase().replace(/\s/g, '');
         });
-        
-        document.getElementById('mobile').addEventListener('input', function(e) {
+
+        document.getElementById('mobile').addEventListener('input', function() {
             this.value = this.value.replace(/[^0-9]/g, '');
         });
-        
-        // Form submission
-        document.getElementById('searchForm').addEventListener('submit', async function(e) {
+
+        // Form Submission
+        document.getElementById('searchForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            
             const vehicle = document.getElementById('vehicle').value.trim();
             const mobile = document.getElementById('mobile').value.trim();
-            
-            // Hide previous errors
+            runLoyaltyLookup(vehicle, mobile);
+        });
+
+        async function runLoyaltyLookup(vehicle, mobile) {
             document.getElementById('vehicleError').style.display = 'none';
             document.getElementById('mobileError').style.display = 'none';
-            
-            // Validation: At least one field must be filled
-            if (!vehicle && !mobile) {
-                document.getElementById('vehicleError').textContent = 'Please enter your vehicle number or mobile number';
+
+            let cleanVehicle = (vehicle || '').trim();
+            let cleanMobile = (mobile || '').trim().replace(/[^0-9]/g, '');
+
+            // Smart detection: 10 digits entered in vehicle field
+            if (!cleanMobile && cleanVehicle.replace(/[^0-9]/g, '').length === 10 && !/[A-Za-z]/.test(cleanVehicle)) {
+                cleanMobile = cleanVehicle.replace(/[^0-9]/g, '');
+                cleanVehicle = '';
+                document.getElementById('mobile').value = cleanMobile;
+                document.getElementById('vehicle').value = '';
+            }
+
+            if (cleanMobile.length > 10) {
+                cleanMobile = cleanMobile.slice(-10);
+                document.getElementById('mobile').value = cleanMobile;
+            }
+
+            if (!cleanVehicle && !cleanMobile) {
+                document.getElementById('vehicleError').textContent = 'Please enter your vehicle number or 10-digit mobile number';
                 document.getElementById('vehicleError').style.display = 'block';
                 return;
             }
-            
-            // Validate mobile number if provided
-            if (mobile && mobile.length !== 10) {
-                document.getElementById('mobileError').textContent = 'Mobile number must be 10 digits';
+
+            if (cleanMobile && cleanMobile.length < 10) {
+                document.getElementById('mobileError').textContent = 'Mobile number must be at least 10 digits';
                 document.getElementById('mobileError').style.display = 'block';
                 return;
             }
-            
-            // Show loading
+
             document.getElementById('loading').classList.remove('hidden');
             document.getElementById('error').classList.add('hidden');
             document.getElementById('results').classList.add('hidden');
-            
+
             try {
-                // Prepare payload - only send filled fields
-                const payload = {};
-                if (vehicle) payload.vehicle = vehicle;
-                if (mobile) payload.mobile = mobile;
-                
-                const response = await fetch('/api/method/clp.api.check_loyalty_points', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
+                const params = new URLSearchParams();
+                if (cleanVehicle) params.set('vehicle', cleanVehicle);
+                if (cleanMobile) params.set('mobile', cleanMobile);
+
+                const response = await fetch(`/api/method/clp.api.check_loyalty_points?${params.toString()}`, {
+                    method: 'GET',
+                    headers: { 'Accept': 'application/json' }
                 });
-                
+
                 const data = await response.json();
-                
                 document.getElementById('loading').classList.add('hidden');
-                
-                if (data.message && data.message.found) {
+
+                if (response.ok && data.message && data.message.found) {
                     displayResults(data.message);
+                } else if (response.status === 429) {
+                    showError('Too many search requests. Please wait a moment and try again.');
                 } else {
-                    showError(data.message?.error || 'Customer not found. Please check your details.');
+                    showError(data.message?.error || data._server_messages || 'Customer record not found. Please check your mobile or vehicle number.');
                 }
             } catch (error) {
                 document.getElementById('loading').classList.add('hidden');
-                showError('An error occurred. Please try again later.');
+                showError('Unable to connect to the loyalty server. Please try again later.');
                 console.error('Error:', error);
             }
-        });
+        }
 
-        
         function showError(message) {
             document.getElementById('errorMessage').textContent = message;
             document.getElementById('error').classList.remove('hidden');
             document.getElementById('results').classList.add('hidden');
         }
-        
-        // All API/database values inserted into innerHTML must be escaped to prevent stored XSS.
+
         function escapeHtml(value) {
             return String(value ?? '').replace(/[&<>"']/g, function (char) {
                 return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char];
             });
         }
 
+        function formatDate(dateStr) {
+            if (!dateStr) return 'N/A';
+            const date = new Date(dateStr);
+            if (isNaN(date.getTime())) return dateStr;
+            const options = { day: '2-digit', month: 'short', year: 'numeric' };
+            return date.toLocaleDateString('en-GB', options);
+        }
+
+        // Render Results with VIP Fuel Pass Design
         function displayResults(data) {
             const customer = data.customer;
             const purchases = data.purchases || [];
             const redemptions = data.redemptions || [];
-            
+
             let html = `
-                <div class="card">
-                    <h3><i class="fas fa-user-circle"></i> ${escapeHtml(customer.customer_name)}</h3>
-                    <div class="customer-info">
-                        <p><i class="fas fa-id-card"></i> <strong>Customer ID:</strong> ${escapeHtml(customer.name)}</p>
-                        <p><i class="fas fa-car"></i> <strong>Vehicle:</strong> ${escapeHtml(customer.vehicle_number)}</p>
-                        <p><i class="fas fa-mobile-alt"></i> <strong>Mobile:</strong> ${escapeHtml(customer.mobile_number)}</p>
-                        <p><i class="fas fa-calendar-alt"></i> <strong>Member Since:</strong> ${formatDate(customer.registration_date)}</p>
-                    </div>
-                    
-                    <div class="points-display">
-                        <div class="points-label">Available Loyalty Points</div>
-                        <div class="points-value">${escapeHtml(customer.current_cycle_liters)}L</div>
-                        <div class="points-label">Liters</div>
-                    </div>
-                    
-                    <div class="stats-grid">
-                        <div class="stat-box">
-                            <div class="stat-value">${escapeHtml(customer.total_liters_purchased)}L</div>
-                            <div class="stat-label">Total Fuel Purchased</div>
+                <!-- Digital VIP Fuel Loyalty Pass -->
+                <div class="vip-loyalty-card">
+                    <div class="card-top-row">
+                        <div class="customer-meta">
+                            <h3><i class="fas fa-crown" style="color: #facc15;"></i> ${escapeHtml(customer.customer_name)}</h3>
+                            <div class="member-badge">
+                                <i class="fas fa-id-card"></i> ID: ${escapeHtml(customer.name)} | Member since ${formatDate(customer.registration_date)}
+                            </div>
                         </div>
-                        <div class="stat-box">
-                            <div class="stat-value green">${escapeHtml(customer.total_gifts_received)}</div>
-                            <div class="stat-label">Total Gifts Received</div>
+                        <div class="vehicle-license-plate">
+                            ${escapeHtml(customer.vehicle_number || 'VEHICLE')}
                         </div>
-                        <div class="stat-box">
-                            <div class="stat-value">${escapeHtml(customer.referral_points_balance || 0)}</div>
-                            <div class="stat-label">Referral Points</div>
+                    </div>
+
+                    <!-- Points Counter -->
+                    <div class="points-box">
+                        <div class="points-caption">Current Cycle Available Points</div>
+                        <div class="points-number">${escapeHtml(customer.current_cycle_liters)} L</div>
+                        <div class="points-unit">Redeemable Loyalty Liters</div>
+                    </div>
+
+                    <!-- Key Stats Grid -->
+                    <div class="stats-row">
+                        <div class="stat-cell">
+                            <div class="stat-num">${escapeHtml(customer.total_liters_purchased)} L</div>
+                            <div class="stat-title">Lifetime Purchased</div>
+                        </div>
+                        <div class="stat-cell green">
+                            <div class="stat-num">${escapeHtml(customer.total_gifts_received)}</div>
+                            <div class="stat-title">Gifts Redeemed</div>
+                        </div>
+                        <div class="stat-cell">
+                            <div class="stat-num">${escapeHtml(customer.referral_points_balance || 0)}</div>
+                            <div class="stat-title">Referral Points</div>
                         </div>
                     </div>
                 </div>
             `;
-            
+
+            // Fuel Purchases
             if (purchases.length > 0) {
                 html += `
-                    <div class="card">
-                        <h4><i class="fas fa-gas-pump"></i> Recent Fuel Purchases (Last ${purchases.length})</h4>
+                    <div class="activity-card">
+                        <h4><i class="fas fa-gas-pump" style="color: var(--accent-blue);"></i> Recent Fuel Purchases (${purchases.length} Entries)</h4>
                 `;
                 purchases.forEach(p => {
                     html += `
-                        <div class="transaction-item">
-                            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
-                                <div>
-                                    <div class="transaction-date">
-                                        <i class="fas fa-calendar"></i> ${formatDate(p.purchase_date)}
-                                    </div>
-                                    <div class="transaction-details">
-                                        <i class="fas fa-gas-pump"></i> ${escapeHtml(p.liters)}L 
-                                        ${p.fuel_type ? '(' + escapeHtml(p.fuel_type) + ')' : ''}
-                                        | <i class="fas fa-rupee-sign"></i> ₹${escapeHtml(p.amount)}
-                                        | <i class="fas fa-map-marker-alt"></i> ${escapeHtml(p.petrol_pump)}
-                                    </div>
+                        <div class="tx-item">
+                            <div>
+                                <div class="tx-date">
+                                    <i class="fas fa-calendar-alt"></i> ${formatDate(p.purchase_date)}
                                 </div>
-                                <span class="badge badge-success">
-                                    <i class="fas fa-plus"></i> ${escapeHtml(p.liters)}L
-                                </span>
+                                <div class="tx-details">
+                                    <strong>${escapeHtml(p.liters)} L</strong> 
+                                    ${p.fuel_type ? '(' + escapeHtml(p.fuel_type) + ')' : ''} 
+                                    | <i class="fas fa-map-marker-alt" style="color: var(--slate-400);"></i> ${escapeHtml(p.petrol_pump)}
+                                </div>
                             </div>
+                            <span class="badge-points-plus">
+                                <i class="fas fa-plus"></i> ${escapeHtml(p.liters)} L
+                            </span>
                         </div>
                     `;
                 });
-                html += '</div>';
+                html += `</div>`;
+            } else {
+                html += `
+                    <div class="activity-card" style="text-align: center; padding: 24px;">
+                        <i class="fas fa-check-circle" style="font-size: 32px; color: #10b981; margin-bottom: 10px; display: inline-block;"></i>
+                        <h4 style="margin: 0 0 6px 0; color: #0f172a; font-size: 16px;">Registered Active Member</h4>
+                        <p style="color: #64748b; margin: 0; font-size: 14px;">Every fuel purchase at our petrol pumps will add points here immediately in real-time.</p>
+                    </div>
+                `;
             }
-            
+
+            // Gift Redemptions
             if (redemptions.length > 0) {
                 html += `
-                    <div class="card">
-                        <h4><i class="fas fa-gift"></i> Recent Gift Redemptions (Last ${redemptions.length})</h4>
+                    <div class="activity-card">
+                        <h4><i class="fas fa-gift" style="color: var(--amber);"></i> Recent Gift Claims (${redemptions.length} Entries)</h4>
                 `;
                 redemptions.forEach(r => {
                     html += `
-                        <div class="transaction-item redemption">
-                            <div class="transaction-date">
-                                <i class="fas fa-calendar"></i> ${formatDate(r.redemption_date)}
-                            </div>
-                            <div class="transaction-details" style="margin: 8px 0;">
-                                <i class="fas fa-map-marker-alt"></i> ${escapeHtml(r.petrol_pump)}
-                            </div>
-                            <div style="margin: 10px 0;">
-                                <strong style="color: #667eea; display: block; margin-bottom: 8px;">
-                                    <i class="fas fa-gifts"></i> Items Redeemed:
-                                </strong>
+                        <div class="tx-item">
+                            <div>
+                                <div class="tx-date">
+                                    <i class="fas fa-calendar-alt"></i> ${formatDate(r.redemption_date)}
+                                </div>
+                                <div class="tx-details">
+                                    <i class="fas fa-map-marker-alt" style="color: var(--slate-400);"></i> ${escapeHtml(r.petrol_pump)}
+                                    <div style="margin-top: 6px;">
                     `;
                     if (r.items && r.items.length > 0) {
                         r.items.forEach(item => {
-                            html += `<span class="gift-badge"><i class="fas fa-gift"></i> ${escapeHtml(item.item_name)} (${escapeHtml(item.points_required)}L)</span>`;
+                            html += `<span class="gift-tag"><i class="fas fa-gift" style="color: #8b5cf6;"></i> ${escapeHtml(item.item_name)} (${escapeHtml(item.points_required)} L)</span>`;
                         });
                     } else {
-                        html += '<span style="color: #999; font-style: italic;">No items recorded</span>';
+                        html += `<span style="color: #94a3b8; font-style: italic;">Gift Milestone Reward</span>`;
                     }
                     html += `
+                                    </div>
+                                </div>
                             </div>
-                            <div style="text-align: right; margin-top: 12px;">
-                                <span class="badge badge-warning">
-                                    <i class="fas fa-minus"></i> Total: ${escapeHtml(r.total_points)}L
-                                </span>
-                            </div>
+                            <span class="badge-points-minus">
+                                <i class="fas fa-minus"></i> ${escapeHtml(r.total_points)} L
+                            </span>
                         </div>
                     `;
                 });
-                html += '</div>';
+                html += `</div>`;
             }
-            
+
             document.getElementById('results').innerHTML = html;
             document.getElementById('results').classList.remove('hidden');
             document.getElementById('error').classList.add('hidden');
-            
-            // Scroll to results
+
             document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
-        
-        function formatDate(dateStr) {
-            const date = new Date(dateStr);
-            const options = { day: '2-digit', month: 'short', year: 'numeric' };
-            return date.toLocaleDateString('en-GB', options);
+
+        // Auto-run immediately if mobile or vehicle passed in query string
+        function checkUrlParamsAndRun() {
+            const params = new URLSearchParams(window.location.search);
+            const m = params.get('mobile') || params.get('search') || params.get('phone') || params.get('q');
+            const v = params.get('vehicle');
+            if (m || v) {
+                if (m) document.getElementById('mobile').value = m.replace(/[^0-9]/g, '').slice(-10);
+                if (v) document.getElementById('vehicle').value = v.trim().toUpperCase();
+                runLoyaltyLookup(v, m);
+            }
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', checkUrlParamsAndRun);
+        } else {
+            checkUrlParamsAndRun();
         }
     </script>
 </body>

@@ -7,6 +7,7 @@ from io import BytesIO
 import base64
 from frappe import _
 from urllib.parse import quote
+from frappe.rate_limiter import rate_limit
 
 
 CLP_STAFF_ROLES = {
@@ -850,16 +851,28 @@ Keep fueling with us! ⛽"""
     
 
 @frappe.whitelist(allow_guest=True)
+@rate_limit(limit=30, seconds=60, ip_based=True)
 def check_loyalty_points(vehicle=None, mobile=None):
-    """Public API to check loyalty points - accepts vehicle, mobile number, or both."""
+    """Public API to check loyalty points - accepts vehicle, mobile number, or both with smart auto-detection."""
     import re
-    if vehicle:
-        vehicle = re.sub(r'[\s\-]+', '', str(vehicle)).upper()
-    if mobile:
-        mobile = re.sub(r'[\s\-]+', '', str(mobile))
-        mobile = re.sub(r'\D', '', mobile)
-        if len(mobile) > 10:
-            mobile = mobile[-10:]
+    
+    clean_vehicle = str(vehicle or '').strip()
+    clean_mobile = str(mobile or '').strip()
+
+    # Smart auto-detection: if mobile looks like a vehicle or vehicle looks like a mobile
+    digits_in_vehicle = re.sub(r'\D', '', clean_vehicle)
+    if len(digits_in_vehicle) == 10 and not clean_mobile:
+        clean_mobile = digits_in_vehicle
+        clean_vehicle = ''
+    elif re.search(r'[A-Za-z]', clean_mobile) and not clean_vehicle:
+        clean_vehicle = clean_mobile
+        clean_mobile = ''
+
+    # Normalize parameters
+    norm_vehicle = re.sub(r'[\s\-\./\\]+', '', clean_vehicle).upper() if clean_vehicle else None
+    norm_mobile = re.sub(r'\D', '', clean_mobile) if clean_mobile else None
+    if norm_mobile and len(norm_mobile) > 10:
+        norm_mobile = norm_mobile[-10:]
 
     result = {
         'found': False,
@@ -869,91 +882,113 @@ def check_loyalty_points(vehicle=None, mobile=None):
         'redemptions': []
     }
 
-    if not vehicle and not mobile:
-        result['error'] = "Please provide your vehicle number or mobile number."
+    if not norm_vehicle and not norm_mobile:
+        result['error'] = "Please provide your vehicle number or 10-digit mobile number."
         return result
 
     try:
-        conditions = []
-        params = []
+        customer_record = None
 
-        if vehicle and mobile:
-            conditions.append("""(
-                REPLACE(REPLACE(UPPER(vehicle_number), ' ', ''), '-', '') = %s 
-                OR RIGHT(REPLACE(REPLACE(mobile_number, ' ', ''), '-', ''), 10) = %s
-            )""")
-            params.extend([vehicle, mobile])
-        elif vehicle:
-            conditions.append("REPLACE(REPLACE(UPPER(vehicle_number), ' ', ''), '-', '') = %s")
-            params.append(vehicle)
-        elif mobile:
-            conditions.append("RIGHT(REPLACE(REPLACE(mobile_number, ' ', ''), '-', ''), 10) = %s")
-            params.append(mobile)
+        # 1. Search by mobile number if provided
+        if norm_mobile and len(norm_mobile) >= 7:
+            mobile_matches = frappe.db.sql("""
+                SELECT name, customer_name, vehicle_number, mobile_number,
+                       current_cycle_liters, total_liters_purchased, total_gifts_received,
+                       registration_date, referral_points_balance
+                FROM `tabLoyalty Customer`
+                WHERE RIGHT(REPLACE(REPLACE(mobile_number, ' ', ''), '-', ''), 10) = %s
+                   OR mobile_number LIKE %s
+                ORDER BY current_cycle_liters DESC
+                LIMIT 1
+            """, (norm_mobile, f"%{norm_mobile}%"), as_dict=1)
+            if mobile_matches:
+                customer_record = mobile_matches[0]
 
-        where_clause = " AND ".join(conditions)
+        # 2. Search by vehicle or doc name if not yet found
+        if not customer_record and norm_vehicle:
+            vehicle_matches = frappe.db.sql("""
+                SELECT name, customer_name, vehicle_number, mobile_number,
+                       current_cycle_liters, total_liters_purchased, total_gifts_received,
+                       registration_date, referral_points_balance
+                FROM `tabLoyalty Customer`
+                WHERE REPLACE(REPLACE(REPLACE(UPPER(vehicle_number), ' ', ''), '-', ''), '.', '') = %s
+                   OR UPPER(name) = %s
+                ORDER BY current_cycle_liters DESC
+                LIMIT 1
+            """, (norm_vehicle, norm_vehicle), as_dict=1)
+            if vehicle_matches:
+                customer_record = vehicle_matches[0]
 
-        customers = frappe.db.sql(f"""
-            SELECT name, customer_name, vehicle_number, mobile_number,
-                   current_cycle_liters, total_liters_purchased, total_gifts_received,
-                   registration_date, referral_points_balance
-            FROM `tabLoyalty Customer`
-            WHERE {where_clause}
-            ORDER BY current_cycle_liters DESC
-            LIMIT 1
-        """, tuple(params), as_dict=1)
+        # 3. Fallback: Search Fuel Purchase Entry by vehicle number to find linked customer
+        if not customer_record and norm_vehicle:
+            fpe_matches = frappe.db.sql("""
+                SELECT customer FROM `tabFuel Purchase Entry`
+                WHERE REPLACE(REPLACE(REPLACE(UPPER(vehicle_number), ' ', ''), '-', ''), '.', '') = %s
+                  AND customer IS NOT NULL AND customer != ''
+                ORDER BY creation DESC
+                LIMIT 1
+            """, (norm_vehicle,), as_dict=1)
+            if fpe_matches and fpe_matches[0].get('customer'):
+                cust_doc = frappe.db.sql("""
+                    SELECT name, customer_name, vehicle_number, mobile_number,
+                           current_cycle_liters, total_liters_purchased, total_gifts_received,
+                           registration_date, referral_points_balance
+                    FROM `tabLoyalty Customer`
+                    WHERE name = %s
+                    LIMIT 1
+                """, (fpe_matches[0]['customer'],), as_dict=1)
+                if cust_doc:
+                    customer_record = cust_doc[0]
 
-        if not customers:
-            if vehicle and mobile:
-                result['error'] = f"No customer found matching vehicle '{vehicle}' or mobile '{mobile}'."
-            elif vehicle:
-                result['error'] = f"No customer found with vehicle number '{vehicle}'."
-            else:
-                result['error'] = f"No customer found with mobile number '{mobile}'."
+        if not customer_record:
+            searched_terms = []
+            if norm_vehicle: searched_terms.append(f"vehicle '{clean_vehicle}'")
+            if norm_mobile: searched_terms.append(f"mobile '{clean_mobile}'")
+            result['error'] = f"No customer found matching {' or '.join(searched_terms)}. Please check the number or contact pump support."
             return result
 
-        customer = customers[0]
         result['found'] = True
         result['customer'] = {
-            'name': customer['name'],
-            'customer_name': customer['customer_name'],
-            'vehicle_number': customer['vehicle_number'],
-            'mobile_number': customer['mobile_number'],
-            'current_cycle_liters': customer['current_cycle_liters'],
-            'total_liters_purchased': customer['total_liters_purchased'],
-            'total_gifts_received': customer['total_gifts_received'],
-            'registration_date': str(customer['registration_date']),
-            'referral_points_balance': customer.get('referral_points_balance') or 0
+            'name': customer_record['name'],
+            'customer_name': customer_record['customer_name'] or 'Valued Customer',
+            'vehicle_number': customer_record['vehicle_number'] or 'N/A',
+            'mobile_number': customer_record['mobile_number'] or 'N/A',
+            'current_cycle_liters': round(float(customer_record.get('current_cycle_liters') or 0.0), 2),
+            'total_liters_purchased': round(float(customer_record.get('total_liters_purchased') or 0.0), 2),
+            'total_gifts_received': int(customer_record.get('total_gifts_received') or 0),
+            'registration_date': str(customer_record.get('registration_date') or ''),
+            'referral_points_balance': round(float(customer_record.get('referral_points_balance') or 0.0), 2)
         }
-        
-        # Fetch purchases
+
+        # Fetch recent purchases (daily transactions up to 15 entries)
         purchases = frappe.db.sql("""
             SELECT purchase_date, liters, amount, fuel_type, petrol_pump
             FROM `tabFuel Purchase Entry`
-            WHERE customer = %s AND docstatus = 1
+            WHERE customer = %s AND docstatus IN (0, 1)
             ORDER BY purchase_date DESC
-            LIMIT 5
-        """, customer['name'], as_dict=1)
-        
+            LIMIT 15
+        """, (customer_record['name'],), as_dict=1)
+
         result['purchases'] = [
             {
                 'purchase_date': str(p['purchase_date']),
-                'liters': p['liters'],
-                'amount': p['amount'],
-                'fuel_type': p['fuel_type'],
-                'petrol_pump': p['petrol_pump']
+                'liters': round(float(p['liters'] or 0.0), 2),
+                'amount': round(float(p['amount'] or 0.0), 2),
+                'fuel_type': p.get('fuel_type') or 'Fuel',
+                'petrol_pump': p.get('petrol_pump') or 'Main Pump Station'
             }
             for p in purchases
         ] if purchases else []
-        
-        # Fetch redemptions
+
+        # Fetch recent gift redemptions
         redemptions = frappe.db.sql("""
             SELECT DISTINCT name, redemption_date, petrol_pump, total_points
             FROM `tabGift Redemption`
-            WHERE customer = %s AND docstatus = 1
+            WHERE customer = %s AND docstatus IN (0, 1)
             ORDER BY redemption_date DESC
-            LIMIT 5
-        """, customer['name'], as_dict=1)
-        
+            LIMIT 10
+        """, (customer_record['name'],), as_dict=1)
+
         redemptions_with_items = []
         for red in redemptions:
             items = frappe.db.sql("""
@@ -961,29 +996,29 @@ def check_loyalty_points(vehicle=None, mobile=None):
                 FROM `tabGift Redemption Item`
                 WHERE parent = %s
                 ORDER BY idx
-            """, red['name'], as_dict=1)
-            
+            """, (red['name'],), as_dict=1)
+
             redemptions_with_items.append({
                 'name': red['name'],
                 'redemption_date': str(red['redemption_date']),
-                'petrol_pump': red['petrol_pump'],
-                'total_points': red['total_points'],
+                'petrol_pump': red.get('petrol_pump') or 'Station Store',
+                'total_points': round(float(red.get('total_points') or 0.0), 2),
                 'items': [
                     {
-                        'gift_item': i['gift_item'],
-                        'item_name': i['item_name'],
-                        'points_required': i['points_required']
+                        'gift_item': i.get('gift_item') or '',
+                        'item_name': i.get('item_name') or 'Gift Reward',
+                        'points_required': round(float(i.get('points_required') or 0.0), 2)
                     }
                     for i in items
                 ] if items else []
             })
-        
+
         result['redemptions'] = redemptions_with_items
-        
+
     except Exception as e:
         frappe.log_error(str(e), "Loyalty Check API Error")
-        result['error'] = "An error occurred while fetching data"
-    
+        result['error'] = f"Unable to retrieve records: {str(e)}"
+
     return result
 
 

@@ -5,6 +5,16 @@ import frappe
 from frappe.model.document import Document
 
 class CLPGiftStockLedger(Document):
+    def before_insert(self):
+        # Enforce approved owner-only stock addition policy
+        user_roles = frappe.get_roles(frappe.session.user)
+        allowed = {"System Manager", "Pump Owner", "CLP Stock Add", "Administrator"}
+        if not (set(user_roles) & allowed):
+            frappe.throw(
+                frappe._("Permission Denied: Only Pump Owners or System Managers are authorized to create Gift Stock Ledger additions."),
+                frappe.PermissionError
+            )
+
     def validate(self):
         if not self.posting_datetime:
             self.posting_datetime = frappe.utils.now_datetime()

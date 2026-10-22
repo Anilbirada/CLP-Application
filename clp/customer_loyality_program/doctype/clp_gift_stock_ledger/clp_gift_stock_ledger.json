@@ -123,7 +123,7 @@
   {
    "role": "CLM Incharge",
    "read": 1,
-   "create": 1,
+   "create": 0,
    "report": 1,
    "export": 1
   },

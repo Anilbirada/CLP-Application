@@ -5,28 +5,59 @@ frappe.pages['gift-stock'].on_page_load = function(wrapper) {
         single_column: true
     });
 
+    // Hide Frappe default duplicate page-head so only our branded petroleum banner is shown
+    $(wrapper).find('.page-head').hide();
+
     let html = `
         <style>
             .stock-container {
-                padding: 20px;
+                padding: 16px 20px 40px 20px;
                 max-width: 1400px;
                 margin: 0 auto;
             }
             
-            .page-header {
-                background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
-                padding: 30px;
-                border-radius: 12px;
-                margin-bottom: 30px;
-                color: white;
+            .gift-stock-hero-banner {
+                background: linear-gradient(135deg, rgba(16, 27, 45, 0.94) 0%, rgba(23, 42, 69, 0.90) 100%),
+                            url('/assets/clp/images/indian_petrol_pump_bg.jpg') no-repeat center center;
+                background-size: cover;
+                padding: 28px 30px;
+                border-radius: 14px;
+                margin-bottom: 22px;
+                color: #ffffff !important;
+                border: 1px solid rgba(255, 255, 255, 0.12);
+                box-shadow: 0 6px 20px rgba(16, 27, 45, 0.18);
+            }
+            
+            .gift-stock-hero-banner h1 {
+                margin: 0;
+                font-size: 26px !important;
+                font-weight: 800 !important;
+                color: #ffffff !important;
+                letter-spacing: -0.02em;
+                display: flex;
+                align-items: center;
+                gap: 12px;
+            }
+            
+            .gift-stock-hero-banner h1 i {
+                color: #F2A900 !important;
+                font-size: 24px;
+            }
+            
+            .gift-stock-hero-banner p {
+                margin: 8px 0 0 0;
+                color: #DCE4ED !important;
+                font-size: 14.5px;
+                font-weight: 500;
             }
             
             .filters-section {
-                background: white;
-                padding: 20px;
+                background: #ffffff;
+                padding: 20px 24px;
                 border-radius: 12px;
-                margin-bottom: 20px;
-                box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+                margin-bottom: 22px;
+                border: 1px solid #DCE4ED;
+                box-shadow: 0 2px 8px rgba(16, 27, 45, 0.05);
             }
             
             .stock-grid {
@@ -35,56 +66,64 @@ frappe.pages['gift-stock'].on_page_load = function(wrapper) {
             }
             
             .stock-card {
-                background: white;
+                background: #ffffff;
                 border-radius: 12px;
-                padding: 20px;
-                box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-                transition: all 0.3s;
+                padding: 22px;
+                border: 1px solid #DCE4ED;
+                box-shadow: 0 2px 8px rgba(16, 27, 45, 0.05);
+                transition: all 0.25s ease;
             }
             
             .stock-card:hover {
-                transform: translateY(-3px);
-                box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+                transform: translateY(-2px);
+                border-color: #1769AA;
+                box-shadow: 0 8px 20px rgba(23, 105, 170, 0.12);
             }
             
             .stock-header {
                 display: grid;
                 grid-template-columns: 2fr 1fr 1fr;
-                gap: 15px;
+                gap: 18px;
                 align-items: center;
-                margin-bottom: 15px;
-                padding-bottom: 15px;
-                border-bottom: 2px solid #f0f0f0;
+                margin-bottom: 16px;
+                padding-bottom: 16px;
+                border-bottom: 1px solid #EDF2F7;
             }
             
             .item-info h4 {
-                margin: 0 0 5px 0;
-                color: #2c3e50;
+                margin: 0 0 6px 0;
+                color: #101B2D;
+                font-size: 17px;
+                font-weight: 700;
             }
             
             .item-info small {
-                color: #6c757d;
+                color: #526174;
+                font-size: 13px;
+                font-weight: 500;
             }
             
             .stock-display {
                 text-align: center;
-                padding: 15px;
-                background: #f8f9fa;
-                border-radius: 8px;
+                padding: 14px 18px;
+                background: #F4F7FA;
+                border: 1px solid #DCE4ED;
+                border-radius: 10px;
             }
             
             .stock-qty {
                 font-size: 32px;
-                font-weight: bold;
-                color: #43e97b;
+                font-weight: 800;
+                color: #159B64;
+                line-height: 1;
             }
             
             .stock-qty.low {
-                color: #ff9800;
+                color: #F2A900;
             }
             
             .stock-qty.out {
-                color: #f5576c;
+                color: #dc2626;
             }
             
             .stock-actions {
@@ -94,30 +133,33 @@ frappe.pages['gift-stock'].on_page_load = function(wrapper) {
             }
             
             .btn-adjust {
-                padding: 8px 20px;
+                padding: 9px 18px;
                 border: none;
-                border-radius: 6px;
+                border-radius: 8px;
                 cursor: pointer;
                 font-weight: 600;
-                transition: all 0.3s;
+                font-size: 13.5px;
+                transition: all 0.2s ease;
             }
             
             .btn-add {
-                background: #43e97b;
+                background: #159B64;
                 color: white;
             }
             
             .btn-add:hover {
-                background: #38d66a;
+                background: #118152;
+                transform: translateY(-1px);
             }
             
             .btn-remove {
-                background: #f5576c;
+                background: #dc2626;
                 color: white;
             }
             
             .btn-remove:hover {
-                background: #e04a5f;
+                background: #b91c1c;
+                transform: translateY(-1px);
             }
             
             @media (max-width: 768px) {
@@ -128,32 +170,32 @@ frappe.pages['gift-stock'].on_page_load = function(wrapper) {
         </style>
         
         <div class="stock-container">
-            <div class="page-header">
-                <h1 style="margin: 0; font-size: 32px;">
+            <div class="gift-stock-hero-banner">
+                <h1>
                     <i class="fa fa-boxes"></i> Gift Stock Management
                 </h1>
-                <p style="margin: 10px 0 0 0; opacity: 0.9;">
-                    Manage gift item inventory across all pump locations
+                <p>
+                    Manage gift item inventory, physical balances, and stock transfers across all pump locations
                 </p>
             </div>
             
             <div class="filters-section">
-                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 15px; align-items: end;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 16px; align-items: end;">
                     <div>
-                        <label style="display: block; margin-bottom: 5px; font-weight: 600;">Pump Location</label>
-                        <select id="pump-filter" class="form-control">
+                        <label style="display: block; margin-bottom: 6px; font-weight: 600; font-size: 13.5px; color: #202B3C;">Pump Location</label>
+                        <select id="pump-filter" class="form-control" style="height: 42px; border: 1px solid #DCE4ED; border-radius: 8px; font-size: 14px; color: #202B3C; font-weight: 500;">
                             <option value="">All Pumps</option>
                         </select>
                     </div>
                     <div>
-                        <label style="display: block; margin-bottom: 5px; font-weight: 600;">Gift Item</label>
-                        <select id="item-filter" class="form-control">
+                        <label style="display: block; margin-bottom: 6px; font-weight: 600; font-size: 13.5px; color: #202B3C;">Gift Item</label>
+                        <select id="item-filter" class="form-control" style="height: 42px; border: 1px solid #DCE4ED; border-radius: 8px; font-size: 14px; color: #202B3C; font-weight: 500;">
                             <option value="">All Items</option>
                         </select>
                     </div>
                     <div>
-                        <label style="display: block; margin-bottom: 5px; font-weight: 600;">Stock Status</label>
-                        <select id="status-filter" class="form-control">
+                        <label style="display: block; margin-bottom: 6px; font-weight: 600; font-size: 13.5px; color: #202B3C;">Stock Status</label>
+                        <select id="status-filter" class="form-control" style="height: 42px; border: 1px solid #DCE4ED; border-radius: 8px; font-size: 14px; color: #202B3C; font-weight: 500;">
                             <option value="">All Status</option>
                             <option value="in_stock">In Stock</option>
                             <option value="low_stock">Low Stock</option>
@@ -161,7 +203,7 @@ frappe.pages['gift-stock'].on_page_load = function(wrapper) {
                         </select>
                     </div>
                     <div>
-                        <button class="btn btn-primary" onclick="load_stock_data()">
+                        <button class="btn btn-primary" onclick="load_stock_data()" style="height: 42px; padding: 0 22px; font-weight: 600; font-size: 14px; background: #1769AA; border: none; border-radius: 8px; box-shadow: 0 2px 6px rgba(23,105,170,0.3); display: flex; align-items: center; gap: 8px;">
                             <i class="fa fa-refresh"></i> Refresh
                         </button>
                     </div>
@@ -169,9 +211,9 @@ frappe.pages['gift-stock'].on_page_load = function(wrapper) {
             </div>
             
             <div class="stock-grid" id="stock-container">
-                <div style="text-align: center; padding: 40px; color: #6c757d;">
-                    <i class="fa fa-spinner fa-spin" style="font-size: 48px;"></i>
-                    <p>Loading stock data...</p>
+                <div style="text-align: center; padding: 40px; color: #526174;">
+                    <i class="fa fa-spinner fa-spin" style="font-size: 42px; color: #1769AA;"></i>
+                    <p style="margin-top: 12px; font-weight: 500; font-size: 14px;">Loading stock data...</p>
                 </div>
             </div>
         </div>

@@ -1,0 +1,420 @@
+@import url("/assets/clp/css/clp_premium_petroleum.css");
+
+/* ==========================================================================
+   CLP PREMIUM PETROLEUM BRAND DESIGN SYSTEM — FRAPPE DESK & WORKSPACE
+   Theme: World-Class Petroleum Industry Management Platform
+   Palette:
+     - Deep Petroleum Navy: #101B2D
+     - Midnight Blue:       #172A45
+     - Brand Blue:          #1769AA
+     - Clean White:         #FFFFFF
+     - Cool Light BG:       #F4F7FA
+     - Charcoal Text:       #202B3C
+     - Secondary Text:      #526174
+     - Fuel Green Accent:   #159B64
+     - Refined Amber:       #F2A900
+     - Light Border:        #DCE4ED
+   ========================================================================== */
+
+:root {
+  --petrol-navy:       #101B2D;
+  --petrol-midnight:   #172A45;
+  --petrol-blue:       #1769AA;
+  --petrol-blue-hover: #135488;
+  --petrol-blue-light: #EBF3FA;
+  --petrol-white:      #FFFFFF;
+  --petrol-bg:         #F4F7FA;
+  --petrol-charcoal:   #202B3C;
+  --petrol-secondary:  #526174;
+  --petrol-green:      #159B64;
+  --petrol-green-light:#ECFDF5;
+  --petrol-amber:      #F2A900;
+  --petrol-amber-light:#FFFBEB;
+  --petrol-danger:     #DC2626;
+  --petrol-border:     #DCE4ED;
+  --petrol-radius-sm:  8px;
+  --petrol-radius-md:  12px;
+  --petrol-radius-lg:  16px;
+  --petrol-shadow-sm:  0 1px 3px rgba(16, 27, 45, 0.05);
+  --petrol-shadow-md:  0 4px 12px -2px rgba(16, 27, 45, 0.08);
+  --petrol-shadow-lg:  0 12px 28px -6px rgba(16, 27, 45, 0.12);
+}
+
+/* --------------------------------------------------------------------------
+   1. Typography & Global Body Background
+   -------------------------------------------------------------------------- */
+html, body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
+  color: var(--petrol-charcoal) !important;
+  background-color: var(--petrol-bg) !important;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* --------------------------------------------------------------------------
+   2. Top Navigation Bar & 42px High-Resolution Brand Logo (Requirement 5)
+   -------------------------------------------------------------------------- */
+.navbar {
+  height: 62px !important;
+  min-height: 62px !important;
+  background: var(--petrol-white) !important;
+  border-bottom: 1px solid var(--petrol-border) !important;
+  box-shadow: 0 2px 8px rgba(16, 27, 45, 0.04) !important;
+  padding: 0 16px !important;
+}
+
+.navbar .navbar-brand,
+.navbar-home {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  padding: 4px 8px !important;
+  height: 100% !important;
+}
+
+/* Make top-left logo significantly bigger, sharp & vertically aligned (38px - 46px) */
+.navbar-brand img,
+.navbar-brand .app-logo,
+.navbar-home img,
+.navbar-brand svg {
+  max-height: 44px !important;
+  height: 44px !important;
+  width: auto !important;
+  object-fit: contain !important;
+  filter: drop-shadow(0 2px 4px rgba(16, 27, 45, 0.15)) !important;
+  transition: transform 0.2s ease !important;
+}
+
+.navbar-brand:hover img {
+  transform: scale(1.04) !important;
+}
+
+.navbar-nav .nav-link {
+  color: var(--petrol-secondary) !important;
+  font-weight: 600 !important;
+  font-size: 14px !important;
+  transition: color 0.15s ease-in-out;
+}
+
+.navbar-nav .nav-link:hover {
+  color: var(--petrol-blue) !important;
+}
+
+/* Header search command bar */
+.search-bar .form-control {
+  background: var(--petrol-bg) !important;
+  border: 1px solid var(--petrol-border) !important;
+  border-radius: var(--petrol-radius-sm) !important;
+  font-size: 14px !important;
+  color: var(--petrol-charcoal) !important;
+  height: 38px !important;
+  padding: 6px 14px 6px 36px !important;
+  transition: all 0.2s ease;
+}
+
+.search-bar .form-control:focus {
+  background: var(--petrol-white) !important;
+  border-color: var(--petrol-blue) !important;
+  box-shadow: 0 0 0 3px rgba(23, 105, 170, 0.15) !important;
+}
+
+/* --------------------------------------------------------------------------
+   3. Sidebar Navigation (Left Navigation)
+   -------------------------------------------------------------------------- */
+.layout-side-section {
+  background: var(--petrol-white) !important;
+  border-right: 1px solid var(--petrol-border) !important;
+}
+
+.desk-sidebar .sidebar-section-title {
+  font-size: 11.5px !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.08em !important;
+  color: var(--petrol-secondary) !important;
+  padding: 14px 16px 8px 16px !important;
+}
+
+.desk-sidebar .standard-sidebar-item {
+  border-radius: var(--petrol-radius-sm) !important;
+  margin: 3px 10px !important;
+  padding: 9px 14px !important;
+  font-weight: 500 !important;
+  font-size: 14px !important;
+  color: var(--petrol-secondary) !important;
+  transition: all 0.18s ease-in-out !important;
+}
+
+.desk-sidebar .standard-sidebar-item:hover {
+  background-color: var(--petrol-bg) !important;
+  color: var(--petrol-navy) !important;
+  transform: translateX(2px);
+}
+
+.desk-sidebar .standard-sidebar-item.selected {
+  background-color: var(--petrol-blue-light) !important;
+  color: var(--petrol-blue) !important;
+  font-weight: 700 !important;
+  border-left: 3px solid var(--petrol-blue) !important;
+}
+
+/* --------------------------------------------------------------------------
+   4. CRITICAL FIX: ELIMINATE ALL EMPTY HORIZONTAL BARS (Requirement 7.C)
+   -------------------------------------------------------------------------- */
+.spacer-widget-box,
+.widget[data-widget-type="spacer"],
+.widget.spacer-widget-box,
+.spacer,
+[data-widget-type="spacer"],
+.widget-skeleton,
+.skeleton-card {
+  display: none !important;
+  height: 0 !important;
+  min-height: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  visibility: hidden !important;
+}
+
+/* --------------------------------------------------------------------------
+   5. Main Workspace & Section Headings
+   -------------------------------------------------------------------------- */
+[data-page-route="Workspaces"] .layout-main-section,
+.layout-main-section {
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 4px 12px 30px 12px !important;
+}
+
+/* Section titles */
+.widget-group-title,
+.section-header,
+.header-title,
+[data-page-route="Workspaces"] h5,
+[data-page-route="Workspaces"] .h4 {
+  color: var(--petrol-navy) !important;
+  font-size: 19px !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.01em !important;
+  margin-top: 20px !important;
+  margin-bottom: 12px !important;
+  display: block !important;
+}
+
+/* --------------------------------------------------------------------------
+   6. Shortcuts & Entry Cards (Requirement 7.D)
+   -------------------------------------------------------------------------- */
+.shortcut-widget-box {
+  background: var(--petrol-white) !important;
+  border: 1px solid var(--petrol-border) !important;
+  border-radius: var(--petrol-radius-md) !important;
+  box-shadow: var(--petrol-shadow-sm) !important;
+  padding: 14px 18px !important;
+  min-height: 52px !important;
+  display: flex !important;
+  align-items: center !important;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.shortcut-widget-box:hover {
+  border-color: var(--petrol-blue) !important;
+  box-shadow: 0 6px 18px rgba(23, 105, 170, 0.14) !important;
+  transform: translateY(-2px) !important;
+  background: var(--petrol-white) !important;
+}
+
+.shortcut-widget-box .widget-title {
+  font-weight: 600 !important;
+  font-size: 14.5px !important;
+  color: var(--petrol-charcoal) !important;
+  letter-spacing: -0.01em !important;
+}
+
+.shortcut-widget-box svg,
+.shortcut-widget-box .icon {
+  color: var(--petrol-blue) !important;
+}
+
+/* --------------------------------------------------------------------------
+   7. KPI Number Cards (Requirement 7.F)
+   -------------------------------------------------------------------------- */
+.number-card-widget,
+.widget.number-card-widget-box {
+  background: var(--petrol-white) !important;
+  border: 1px solid var(--petrol-border) !important;
+  border-radius: var(--petrol-radius-lg) !important;
+  box-shadow: var(--petrol-shadow-sm) !important;
+  padding: 22px 24px !important;
+  position: relative !important;
+  overflow: hidden !important;
+  transition: all 0.25s ease !important;
+}
+
+.number-card-widget:hover,
+.widget.number-card-widget-box:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: var(--petrol-shadow-md) !important;
+  border-color: #B8C9DC !important;
+}
+
+.number-card-widget::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--petrol-blue), #3b82f6);
+}
+
+.number-card-widget .widget-title {
+  font-size: 12.5px !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.06em !important;
+  color: var(--petrol-secondary) !important;
+  margin-bottom: 8px !important;
+}
+
+.number-card-widget .number {
+  font-size: 32px !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.02em !important;
+  color: var(--petrol-navy) !important;
+  line-height: 1.15 !important;
+}
+
+.number-card-widget .widget-subtitle {
+  font-size: 13px !important;
+  color: var(--petrol-secondary) !important;
+  font-weight: 500 !important;
+  margin-top: 6px !important;
+}
+
+/* --------------------------------------------------------------------------
+   8. Charts & Reports Section (Requirement 7.G)
+   -------------------------------------------------------------------------- */
+.chart-widget-box,
+.quick-list-widget-box,
+.links-widget-box {
+  background: var(--petrol-white) !important;
+  border: 1px solid var(--petrol-border) !important;
+  border-radius: var(--petrol-radius-lg) !important;
+  box-shadow: var(--petrol-shadow-sm) !important;
+  padding: 22px 24px !important;
+  margin-bottom: 16px !important;
+}
+
+.chart-widget-box .widget-title,
+.quick-list-widget-box .widget-title,
+.links-widget-box .widget-title {
+  font-size: 17px !important;
+  font-weight: 700 !important;
+  color: var(--petrol-navy) !important;
+  letter-spacing: -0.01em !important;
+}
+
+/* --------------------------------------------------------------------------
+   9. Buttons & Interactive Controls (Requirement 10)
+   -------------------------------------------------------------------------- */
+.btn {
+  font-weight: 600 !important;
+  font-size: 14px !important;
+  border-radius: var(--petrol-radius-sm) !important;
+  padding: 8px 18px !important;
+  transition: all 0.2s ease !important;
+}
+
+.btn-primary {
+  background: var(--petrol-blue) !important;
+  border-color: var(--petrol-blue) !important;
+  color: var(--petrol-white) !important;
+  box-shadow: 0 2px 6px rgba(23, 105, 170, 0.25) !important;
+}
+
+.btn-primary:hover {
+  background: var(--petrol-blue-hover) !important;
+  border-color: var(--petrol-blue-hover) !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 12px rgba(23, 105, 170, 0.35) !important;
+}
+
+.btn-success {
+  background: var(--petrol-green) !important;
+  border-color: var(--petrol-green) !important;
+  color: var(--petrol-white) !important;
+}
+
+.btn-danger {
+  background: var(--petrol-danger) !important;
+  border-color: var(--petrol-danger) !important;
+  color: var(--petrol-white) !important;
+}
+
+/* --------------------------------------------------------------------------
+   10. Form Controls, Dropdowns & Tables (Requirement 4 & 10)
+   -------------------------------------------------------------------------- */
+.form-control {
+  height: 42px !important;
+  border: 1px solid var(--petrol-border) !important;
+  border-radius: var(--petrol-radius-sm) !important;
+  color: var(--petrol-charcoal) !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  background: var(--petrol-white) !important;
+}
+
+.form-control:focus {
+  border-color: var(--petrol-blue) !important;
+  box-shadow: 0 0 0 3px rgba(23, 105, 170, 0.15) !important;
+}
+
+label, .form-label, .control-label {
+  font-size: 13.5px !important;
+  font-weight: 600 !important;
+  color: var(--petrol-charcoal) !important;
+  margin-bottom: 6px !important;
+}
+
+/* Tables */
+.table thead th {
+  background: var(--petrol-bg) !important;
+  color: var(--petrol-navy) !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+  border-bottom: 2px solid var(--petrol-border) !important;
+  padding: 12px 16px !important;
+}
+
+.table tbody td {
+  font-size: 14px !important;
+  color: var(--petrol-charcoal) !important;
+  border-bottom: 1px solid #EDF2F7 !important;
+  padding: 12px 16px !important;
+  vertical-align: middle !important;
+}
+
+.table-hover tbody tr:hover {
+  background-color: var(--petrol-blue-light) !important;
+}
+
+/* --------------------------------------------------------------------------
+   11. Petroleum Login Page Overlay
+   -------------------------------------------------------------------------- */
+.login-content {
+  background: linear-gradient(135deg, rgba(16, 27, 45, 0.92) 0%, rgba(23, 42, 69, 0.88) 100%), 
+              url('/assets/clp/images/indian_petrol_pump_bg.jpg') no-repeat center center fixed !important;
+  background-size: cover !important;
+  min-height: 100vh;
+}
+
+.for-login .page-card {
+  border-radius: var(--petrol-radius-lg) !important;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.35) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+}

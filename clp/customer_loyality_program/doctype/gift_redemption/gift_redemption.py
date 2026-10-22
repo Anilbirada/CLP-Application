@@ -8,9 +8,20 @@ from frappe import _
 
 class GiftRedemption(Document):
     def before_insert(self):
-        """Auto-set gift_given_by"""
+        """Auto-set gift_given_by and snapshot customer mobile and vehicle number"""
         if not self.gift_given_by:
             self.gift_given_by = frappe.session.user
+        if self.customer:
+            cust = frappe.db.get_value(
+                "Loyalty Customer", self.customer, ["mobile_number", "vehicle_number", "customer_name"], as_dict=True
+            )
+            if cust:
+                if not self.customer_mobile and cust.mobile_number:
+                    self.customer_mobile = cust.mobile_number
+                if not self.vehicle_number and cust.vehicle_number:
+                    self.vehicle_number = cust.vehicle_number
+                if not self.customer_name and cust.customer_name:
+                    self.customer_name = cust.customer_name
     
     def before_validate(self):
         """Prevent validation on cancel/update after submit"""
@@ -27,12 +38,16 @@ class GiftRedemption(Document):
             self.gift_given_by = frappe.session.user
 
         if self.customer:
-            customer_details = frappe.db.get_value(
-                "Loyalty Customer", self.customer, ["mobile_number", "vehicle_number"], as_dict=True
+            cust = frappe.db.get_value(
+                "Loyalty Customer", self.customer, ["mobile_number", "vehicle_number", "customer_name"], as_dict=True
             )
-            if customer_details:
-                self.customer_mobile = customer_details.mobile_number
-                self.vehicle_number = customer_details.vehicle_number
+            if cust:
+                if not self.customer_mobile and cust.mobile_number:
+                    self.customer_mobile = cust.mobile_number
+                if not self.vehicle_number and cust.vehicle_number:
+                    self.vehicle_number = cust.vehicle_number
+                if not self.customer_name and cust.customer_name:
+                    self.customer_name = cust.customer_name
 
         # The selected warehouse must belong to the selected pump.
         pump_warehouse = frappe.db.get_value("Petrol Pump Location", self.petrol_pump, "warehouse") if self.petrol_pump else None

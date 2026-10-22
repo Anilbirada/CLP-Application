@@ -26,50 +26,55 @@ frappe.pages['clp-qr-scanner'].on_page_load = function(wrapper) {
             }
             
             .qr-header {
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                padding: 30px 20px;
-                border-radius: 15px;
-                margin-bottom: 30px;
-                color: white;
+                background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+                padding: 32px 24px;
+                border-radius: 14px;
+                margin-bottom: 28px;
+                color: #ffffff;
                 text-align: center;
+                border: 1px solid rgba(255,255,255,0.08);
+                box-shadow: 0 4px 14px rgba(15,23,42,0.12);
             }
             
             @media (min-width: 768px) {
                 .qr-header {
-                    padding: 40px;
+                    padding: 38px 24px;
                 }
             }
             
             .qr-header h1 {
-                margin: 0 0 10px 0;
-                color: white;
+                margin: 0 0 8px 0;
+                color: #ffffff;
                 font-size: 24px;
+                font-weight: 800;
+                letter-spacing: -0.02em;
             }
             
             @media (min-width: 768px) {
                 .qr-header h1 {
-                    font-size: 32px;
+                    font-size: 28px;
                 }
             }
             
             .customer-card {
-                margin-bottom: 15px;
-                border: 2px solid #e9ecef;
-                border-radius: 10px;
+                margin-bottom: 12px;
+                border: 1.5px solid #e2e8f0;
+                border-radius: 12px;
                 cursor: pointer;
-                transition: all 0.3s;
-                background: white;
+                transition: all 0.2s ease;
+                background: #ffffff;
                 overflow: hidden;
+                box-shadow: 0 1px 3px rgba(0,0,0,0.03);
             }
             
             .customer-card:hover {
-                border-color: #667eea;
-                box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+                border-color: #2563eb;
+                box-shadow: 0 8px 18px -2px rgba(37, 99, 235, 0.12);
                 transform: translateY(-2px);
             }
             
             .customer-card-body {
-                padding: 15px;
+                padding: 16px 20px;
             }
             
             @media (min-width: 768px) {
@@ -94,9 +99,9 @@ frappe.pages['clp-qr-scanner'].on_page_load = function(wrapper) {
             
             .customer-info h5 {
                 margin: 0 0 5px 0;
-                color: #2c3e50;
+                color: #0f172a;
                 font-size: 16px;
-                font-weight: 600;
+                font-weight: 700;
             }
             
             @media (min-width: 768px) {
@@ -106,13 +111,14 @@ frappe.pages['clp-qr-scanner'].on_page_load = function(wrapper) {
             }
             
             .customer-info small {
-                color: #6c757d;
-                font-size: 12px;
+                color: #64748b;
+                font-size: 13px;
+                font-weight: 500;
             }
             
             @media (min-width: 768px) {
                 .customer-info small {
-                    font-size: 14px;
+                    font-size: 13.5px;
                 }
             }
             
@@ -122,51 +128,56 @@ frappe.pages['clp-qr-scanner'].on_page_load = function(wrapper) {
             
             .customer-stats h4 {
                 margin: 0;
-                color: #667eea;
+                color: #059669;
                 font-size: 20px;
-                font-weight: bold;
+                font-weight: 800;
             }
             
             @media (min-width: 768px) {
                 .customer-stats h4 {
-                    font-size: 24px;
+                    font-size: 22px;
                 }
             }
             
             .customer-stats small {
-                color: #6c757d;
+                color: #64748b;
                 font-size: 12px;
+                font-weight: 600;
+                text-transform: uppercase;
             }
             
             .section-title {
-                border-bottom: 3px solid #667eea;
-                padding-bottom: 15px;
-                margin-bottom: 25px;
-                color: #36414C;
-                font-size: 18px;
+                border-bottom: 2px solid #e2e8f0;
+                padding-bottom: 12px;
+                margin-bottom: 20px;
+                color: #0f172a;
+                font-size: 17px;
+                font-weight: 700;
             }
             
             @media (min-width: 768px) {
                 .section-title {
-                    font-size: 20px;
+                    font-size: 19px;
                 }
             }
             
             .scan-result-success {
-                background: white;
-                border: 2px solid #28a745;
-                border-radius: 10px;
-                padding: 20px;
-                font-size: 16px;
+                background: #ffffff;
+                border: 2px solid #059669;
+                border-radius: 12px;
+                padding: 24px;
+                font-size: 15px;
                 text-align: left;
+                box-shadow: 0 4px 14px rgba(5,150,105,0.08);
             }
             
             .scan-result-warning {
-                background: white;
-                border: 2px solid #ff9800;
-                border-radius: 10px;
-                padding: 20px;
-                font-size: 16px;
+                background: #ffffff;
+                border: 2px solid #d97706;
+                border-radius: 12px;
+                padding: 24px;
+                font-size: 15px;
+                box-shadow: 0 4px 14px rgba(217,119,6,0.08);
             }
             
             .result-table {
@@ -175,12 +186,14 @@ frappe.pages['clp-qr-scanner'].on_page_load = function(wrapper) {
             }
             
             .result-table td {
-                padding: 8px;
-                color: #2c3e50;
+                padding: 10px 8px;
+                color: #0f172a;
+                border-bottom: 1px solid #f1f5f9;
             }
             
             .result-table td:first-child {
                 font-weight: 600;
+                color: #64748b;
                 width: 40%;
             }
             
@@ -191,41 +204,50 @@ frappe.pages['clp-qr-scanner'].on_page_load = function(wrapper) {
             }
             
             .btn-quick-sale {
-                background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-                color: white;
-                border: none;
-                padding: 15px 40px;
-                font-size: 18px;
-                border-radius: 10px;
+                background: #0f172a;
+                color: #ffffff;
+                border: 1px solid #334155;
+                padding: 12px 30px;
+                font-size: 15px;
+                font-weight: 600;
+                border-radius: 8px;
                 cursor: pointer;
-                transition: all 0.3s;
-                margin-left: 10px;
+                transition: all 0.2s ease;
+                box-shadow: 0 2px 6px rgba(15,23,42,0.15);
             }
             
             .btn-quick-sale:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 5px 15px rgba(240, 147, 251, 0.3);
+                background: #1e293b;
+                transform: translateY(-1px);
+                box-shadow: 0 4px 12px rgba(15,23,42,0.25);
+            }
+
+            .scanner-controls {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-wrap: wrap;
+                gap: 12px;
+                margin-bottom: 36px;
             }
         </style>
         
         <div class="qr-scanner-page">
             <div class="scanner-container">
                 <div class="qr-header">
-                    <h1><i class="fa fa-qrcode"></i> QR Scanner</h1>
-                    <p style="margin: 0; font-size: 16px;">Scan customer QR code or search customer</p>
+                    <h1><i class="fa fa-qrcode" style="color: #38bdf8; margin-right: 8px;"></i> Quick QR Scanner</h1>
+                    <p style="margin: 0; font-size: 14.5px; color: #cbd5e1;">Scan customer QR code or look up by vehicle / mobile</p>
                 </div>
                 
-                <div style="text-align: center; margin-bottom: 40px;">
-                    <button class="btn btn-primary btn-lg" id="start-scanner" 
-                            style="padding: 15px 40px; font-size: 18px; border-radius: 10px; margin-right: 10px; margin-bottom: 10px;">
-                        <i class="fa fa-camera"></i> Scan QR
+                <div class="scanner-controls">
+                    <button class="btn btn-primary btn-lg" id="start-scanner" style="padding: 12px 30px; font-size: 15px; border-radius: 8px;">
+                        <i class="fa fa-camera"></i> Scan Camera QR
                     </button>
-                    <button class="btn btn-success btn-lg" id="search-customer" 
-                            style="padding: 15px 40px; font-size: 18px; border-radius: 10px; margin-right: 10px; margin-bottom: 10px;">
-                        <i class="fa fa-search"></i> Search
+                    <button class="btn btn-success btn-lg" id="search-customer" style="padding: 12px 30px; font-size: 15px; border-radius: 8px;">
+                        <i class="fa fa-search"></i> Search Customer
                     </button>
                     <button class="btn-quick-sale btn-lg" id="quick-sale">
-                        <i class="fa fa-bolt"></i> Quick Sale
+                        <i class="fa fa-bolt" style="color: #facc15;"></i> Quick Refuel Sale
                     </button>
                 </div>
                 

@@ -93,30 +93,38 @@ def get_data(filters):
     
     data = frappe.db.sql(f"""
         SELECT 
-            name as customer_id,
-            customer_name,
-            vehicle_number,
-            mobile_number,
-            current_cycle_liters,
-            total_liters_purchased,
-            total_gifts_received,
-            last_purchase_date,
-            last_gift_date,
-            registration_date,
-            status
-        FROM `tabLoyalty Customer`
+            c.name as customer_id,
+            c.customer_name,
+            c.vehicle_number,
+            c.mobile_number,
+            c.current_cycle_liters,
+            c.total_liters_purchased,
+            c.total_gifts_received,
+            max_fpe.last_purchase_date,
+            c.last_gift_date,
+            c.registration_date,
+            c.status
+        FROM `tabLoyalty Customer` c
+        LEFT JOIN (
+            SELECT customer, MAX(DATE(purchase_date)) as last_purchase_date
+            FROM `tabFuel Purchase Entry`
+            WHERE docstatus = 1
+            GROUP BY customer
+        ) max_fpe ON max_fpe.customer = c.name
         WHERE 1=1 {conditions}
-        ORDER BY current_cycle_liters DESC, total_liters_purchased DESC
-    """, as_dict=1)
+        ORDER BY c.current_cycle_liters DESC, c.total_liters_purchased DESC
+    """, filters or {}, as_dict=1)
     
     return data
 
 
 def get_conditions(filters):
     conditions = ""
+    if not filters:
+        return conditions
     
     if filters.get("status"):
-        conditions += " AND status = %(status)s"
+        conditions += " AND c.status = %(status)s"
     
     return conditions
 

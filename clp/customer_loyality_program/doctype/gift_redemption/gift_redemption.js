@@ -189,6 +189,9 @@ function load_customer_details(frm) {
             if (r.message) {
                 let c = r.message;
                 frm.set_value('liters_accumulated', c.current_cycle_liters);
+                if (c.mobile_number) frm.set_value('customer_mobile', c.mobile_number);
+                if (c.vehicle_number) frm.set_value('vehicle_number', c.vehicle_number);
+                if (c.customer_name) frm.set_value('customer_name', c.customer_name);
                 
                 let balance_color = c.current_cycle_liters >= 0 ? '#ffd700' : '#ff4444';
                 
