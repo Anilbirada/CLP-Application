@@ -37,7 +37,7 @@ def record_gift_stock_movement(pump, item_code, qty_change, voucher_type, vouche
 
     # Also keep tabBin actual_qty synchronized for the pump's warehouse
     warehouse = frappe.db.get_value("Petrol Pump Location", pump, "warehouse")
-    if warehouse and frappe.db.table_exists("tabBin"):
+    if warehouse and (frappe.db.table_exists("Bin") or frappe.db.table_exists("tabBin")):
         bin_name = frappe.db.get_value("Bin", {"item_code": item_code, "warehouse": warehouse}, "name")
         if bin_name:
             frappe.db.sql("""
@@ -50,6 +50,7 @@ def record_gift_stock_movement(pump, item_code, qty_change, voucher_type, vouche
                 INSERT INTO `tabBin` (name, creation, modified, modified_by, owner, docstatus, item_code, warehouse, actual_qty)
                 VALUES (%s, %s, %s, %s, %s, 0, %s, %s, %s)
             """, (frappe.generate_hash(length=10), now, now, user, user, item_code, warehouse, qty_change))
+        frappe.db.commit()
             
     return ledger_entry
 

@@ -533,27 +533,53 @@ def adjust_gift_stock(item_code, warehouse, qty, action, reason):
     if not frappe.db.exists("Pump Gift Item", {"gift_item": item_code, "parenttype": "Petrol Pump Location"}):
         frappe.throw(_("Only configured CLP gift items can be adjusted"))
 
-    # Create Stock Entry
-    stock_entry = frappe.get_doc({
-        "doctype": "Stock Entry",
-        "stock_entry_type": "Material Receipt" if action == "add" else "Material Issue",
-        "company": frappe.defaults.get_defaults().company,
-        "remarks": f"Gift Stock Adjustment: {reason}",
-        "items": [{
-            "item_code": item_code,
-            "qty": qty,
-            "t_warehouse": warehouse if action == "add" else None,
-            "s_warehouse": warehouse if action == "remove" else None,
-            "cost_center": frappe.db.get_value("Company", frappe.defaults.get_defaults().company, "cost_center")
-        }]
-    })
-    
-    stock_entry.insert()
-    stock_entry.submit()
-    
+    # Resolve petrol pump from warehouse or name
+    pump = frappe.db.get_value("Petrol Pump Location", {"warehouse": warehouse}, "name")
+    if not pump:
+        pump = frappe.db.get_value("Petrol Pump Location", warehouse, "name") or warehouse
+
+    qty_change = qty if action == "add" else -qty
+    voucher_type = "Stock Addition" if action == "add" else "Stock Subtraction"
+
+    # 1. Primary: Record in CLP Gift Stock Ledger and synchronize tabBin
+    from clp.stock import record_gift_stock_movement
+    ledger_entry = record_gift_stock_movement(
+        pump=pump,
+        item_code=item_code,
+        qty_change=qty_change,
+        voucher_type=voucher_type,
+        voucher_no="",
+        remarks=f"Gift Stock Adjustment: {reason}",
+        user=frappe.session.user
+    )
+
+    stock_entry_name = ledger_entry.name if ledger_entry else None
+
+    # 2. Optional: If ERPNext is installed, record Stock Entry
+    if "erpnext" in frappe.get_installed_apps() and frappe.db.exists("DocType", "Stock Entry"):
+        try:
+            stock_entry = frappe.get_doc({
+                "doctype": "Stock Entry",
+                "stock_entry_type": "Material Receipt" if action == "add" else "Material Issue",
+                "company": frappe.defaults.get_defaults().company,
+                "remarks": f"Gift Stock Adjustment: {reason}",
+                "items": [{
+                    "item_code": item_code,
+                    "qty": qty,
+                    "t_warehouse": warehouse if action == "add" else None,
+                    "s_warehouse": warehouse if action == "remove" else None,
+                    "cost_center": frappe.db.get_value("Company", frappe.defaults.get_defaults().company, "cost_center")
+                }]
+            })
+            stock_entry.insert()
+            stock_entry.submit()
+            stock_entry_name = stock_entry.name
+        except Exception as e:
+            frappe.log_error(f"Optional ERPNext Stock Entry skipped: {e}", "Stock Adjustment")
+
     return {
         "success": True,
-        "stock_entry": stock_entry.name
+        "stock_entry": stock_entry_name
     }
 
 
