@@ -1169,3 +1169,234 @@ def get_referral_report(start_datetime=None, end_datetime=None, petrol_pump=None
         LEFT JOIN `tabLoyalty Customer` ref ON ref.name = r.referrer
         LEFT JOIN `tabLoyalty Customer` rc ON rc.name = r.referred_customer
         WHERE {' AND '.join(conditions)} ORDER BY r.reward_date DESC LIMIT 5000""", tuple(params), as_dict=True)
+
+
+# ============================================================================
+# Mobile Application APIs (CLP Mobile App Integration)
+# ============================================================================
+
+@frappe.whitelist(allow_guest=True)
+@rate_limit(limit=20, seconds=60, ip_based=True)
+def customer_mobile_login(identifier):
+    """
+    Authenticate mobile customer by registered mobile number or vehicle number.
+    Returns customer profile and secure session token for Expo SecureStore.
+    """
+    import re
+    if not identifier:
+        frappe.throw(_("Mobile number or vehicle number is required"), frappe.ValidationError)
+    
+    clean_id = str(identifier).strip()
+    norm_mobile = re.sub(r'\D', '', clean_id)
+    if len(norm_mobile) > 10:
+        norm_mobile = norm_mobile[-10:]
+    norm_vehicle = re.sub(r'[\s\-\./\\]+', '', clean_id).upper()
+
+    customer = None
+    if norm_mobile and len(norm_mobile) >= 7:
+        custs = frappe.db.sql("""
+            SELECT name, customer_name, vehicle_number, mobile_number,
+                   current_cycle_liters, total_liters_purchased, total_gifts_received,
+                   registration_date, referral_points_balance, qr_access_token, status
+            FROM `tabLoyalty Customer`
+            WHERE RIGHT(REPLACE(REPLACE(mobile_number, ' ', ''), '-', ''), 10) = %s
+               OR mobile_number LIKE %s
+            LIMIT 1
+        """, (norm_mobile, f"%{norm_mobile}%"), as_dict=True)
+        if custs:
+            customer = custs[0]
+
+    if not customer and norm_vehicle:
+        custs = frappe.db.sql("""
+            SELECT name, customer_name, vehicle_number, mobile_number,
+                   current_cycle_liters, total_liters_purchased, total_gifts_received,
+                   registration_date, referral_points_balance, qr_access_token, status
+            FROM `tabLoyalty Customer`
+            WHERE REPLACE(REPLACE(REPLACE(UPPER(vehicle_number), ' ', ''), '-', ''), '.', '') = %s
+               OR UPPER(name) = %s
+            LIMIT 1
+        """, (norm_vehicle, norm_vehicle), as_dict=True)
+        if custs:
+            customer = custs[0]
+
+    if not customer:
+        frappe.throw(_("No customer found matching provided mobile or vehicle number. Please visit a pump to register."), frappe.DoesNotExistError)
+
+    if customer.get("status") != "Active":
+        frappe.throw(_("Customer account is currently inactive. Please contact station support."), frappe.PermissionError)
+
+    # Ensure valid token
+    token = customer.get("qr_access_token")
+    if not token or len(token) < 32:
+        import secrets
+        token = secrets.token_urlsafe(32)
+        frappe.db.set_value("Loyalty Customer", customer["name"], "qr_access_token", token)
+
+    return {
+        "success": True,
+        "token": token,
+        "customer": {
+            "name": customer["name"],
+            "customer_name": customer["customer_name"] or "Valued Customer",
+            "mobile_number": customer["mobile_number"],
+            "vehicle_number": customer["vehicle_number"],
+            "current_cycle_liters": round(float(customer.get("current_cycle_liters") or 0.0), 2),
+            "total_liters_purchased": round(float(customer.get("total_liters_purchased") or 0.0), 2),
+            "total_gifts_received": int(customer.get("total_gifts_received") or 0),
+            "referral_points_balance": round(float(customer.get("referral_points_balance") or 0.0), 2),
+            "registration_date": str(customer.get("registration_date") or ""),
+            "qr_access_token": token
+        }
+    }
+
+
+@frappe.whitelist(allow_guest=True)
+def get_customer_rewards_catalog(petrol_pump=None):
+    """
+    Retrieve available rewards catalog for customer mobile browsing.
+    """
+    conditions = ["p.is_active = 1"]
+    params = []
+    if petrol_pump:
+        conditions.append("p.name = %s")
+        params.append(petrol_pump)
+
+    query = f"""
+        SELECT 
+            gi.gift_item,
+            gi.item_name,
+            gi.points_required,
+            gi.description,
+            p.name as petrol_pump,
+            p.pump_name,
+            COALESCE(b.actual_qty, gi.available_stock, 0) as available_stock
+        FROM `tabPump Gift Item` gi
+        JOIN `tabPetrol Pump Location` p ON p.name = gi.parent
+        LEFT JOIN `tabBin` b ON b.item_code = gi.gift_item AND b.warehouse = p.warehouse
+        WHERE {' AND '.join(conditions)}
+        ORDER BY gi.points_required ASC
+    """
+    items = frappe.db.sql(query, tuple(params), as_dict=True)
+    catalog = []
+    for item in items:
+        catalog.append({
+            "gift_item": item["gift_item"],
+            "item_name": item["item_name"] or item["gift_item"],
+            "points_required": round(float(item["points_required"] or 0), 2),
+            "description": item.get("description") or "Exclusive CLP loyalty reward",
+            "petrol_pump": item["petrol_pump"],
+            "pump_name": item.get("pump_name") or item["petrol_pump"],
+            "in_stock": float(item.get("available_stock") or 0) > 0,
+            "stock_qty": float(item.get("available_stock") or 0)
+        })
+    return catalog
+
+
+@frappe.whitelist(allow_guest=True)
+def get_customer_notifications(token):
+    """
+    Chronological notification stream for customer mobile app.
+    """
+    if not token or len(token) < 32:
+        frappe.throw(_("Invalid token"), frappe.PermissionError)
+    customer = frappe.db.get_value("Loyalty Customer", {"qr_access_token": token}, ["name", "customer_name"], as_dict=True)
+    if not customer:
+        frappe.throw(_("Customer not found"), frappe.DoesNotExistError)
+
+    notifications = []
+    # 1. Fuel purchases
+    purchases = frappe.db.sql("""
+        SELECT name, liters, amount, fuel_type, petrol_pump, purchase_date
+        FROM `tabFuel Purchase Entry`
+        WHERE customer = %s AND docstatus = 1
+        ORDER BY purchase_date DESC LIMIT 10
+    """, (customer["name"],), as_dict=True)
+    for p in purchases:
+        notifications.append({
+            "id": f"fuel-{p['name']}",
+            "type": "fuel_purchase",
+            "title": f"Fuel Points Credited: +{round(p['liters'], 1)}L",
+            "message": f"Purchased {p['liters']}L {p['fuel_type']} at {p['petrol_pump']}. Total ₹{p['amount']}.",
+            "timestamp": str(p["purchase_date"]),
+            "read": False
+        })
+
+    # 2. Redemptions
+    redemptions = frappe.db.sql("""
+        SELECT name, total_points, petrol_pump, redemption_date
+        FROM `tabGift Redemption`
+        WHERE customer = %s AND docstatus = 1
+        ORDER BY redemption_date DESC LIMIT 10
+    """, (customer["name"],), as_dict=True)
+    for r in redemptions:
+        notifications.append({
+            "id": f"gift-{r['name']}",
+            "type": "gift_redemption",
+            "title": f"Reward Redeemed: -{round(r['total_points'], 1)}L",
+            "message": f"Successfully claimed reward at {r['petrol_pump']}.",
+            "timestamp": str(r["redemption_date"]),
+            "read": True
+        })
+
+    # 3. Referral rewards
+    referrals = frappe.db.sql("""
+        SELECT name, points_awarded, reward_date
+        FROM `tabReferral Reward Entry`
+        WHERE referrer = %s AND status = 'Awarded'
+        ORDER BY reward_date DESC LIMIT 10
+    """, (customer["name"],), as_dict=True)
+    for ref in referrals:
+        notifications.append({
+            "id": f"ref-{ref['name']}",
+            "type": "referral_bonus",
+            "title": f"Referral Bonus Credited: +{ref['points_awarded']} pts",
+            "message": "A friend you referred completed their first fuel purchase!",
+            "timestamp": str(ref["reward_date"]),
+            "read": False
+        })
+
+    notifications.sort(key=lambda x: x["timestamp"], reverse=True)
+    return notifications[:25]
+
+
+@frappe.whitelist(allow_guest=True)
+def update_customer_profile(token, customer_name=None, vehicle_number=None):
+    """
+    Safely update customer profile fields from mobile application.
+    """
+    import re
+    if not token or len(token) < 32:
+        frappe.throw(_("Invalid token"), frappe.PermissionError)
+    cust_id = frappe.db.get_value("Loyalty Customer", {"qr_access_token": token}, "name")
+    if not cust_id:
+        frappe.throw(_("Customer not found"), frappe.DoesNotExistError)
+
+    update_fields = {}
+    if customer_name:
+        clean_name = str(customer_name).strip()
+        if len(clean_name) >= 2:
+            update_fields["customer_name"] = clean_name
+
+    if vehicle_number:
+        clean_v = re.sub(r'\s+', '', str(vehicle_number)).upper()
+        if len(clean_v) >= 4:
+            update_fields["vehicle_number"] = clean_v
+
+    if update_fields:
+        frappe.db.set_value("Loyalty Customer", cust_id, update_fields)
+
+    doc = frappe.get_doc("Loyalty Customer", cust_id)
+    return {
+        "success": True,
+        "message": _("Profile updated successfully"),
+        "customer": {
+            "name": doc.name,
+            "customer_name": doc.customer_name,
+            "vehicle_number": doc.vehicle_number,
+            "mobile_number": doc.mobile_number,
+            "current_cycle_liters": doc.current_cycle_liters,
+            "total_liters_purchased": doc.total_liters_purchased,
+            "total_gifts_received": doc.total_gifts_received
+        }
+    }
+
