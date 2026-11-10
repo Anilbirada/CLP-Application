@@ -254,6 +254,103 @@ frappe.provide('clp');
         updateBottomButton();
     }
 
+    // 8. Direct Profile Photo Upload for Administrator & User Profile Pages
+    function setupProfilePhotoEnhancements() {
+        if (!window.frappe) return;
+
+        function checkAndInjectProfilePhotoUpload() {
+            const $sidebar = $('.user-profile-sidebar');
+            if (!$sidebar.length || !$sidebar.is(':visible')) return;
+
+            // Ensure user image container is visible on mobile & desktop
+            const $imgContainer = $sidebar.find('.user-image-container');
+            if ($imgContainer.length) {
+                $imgContainer.removeClass('hidden-xs hidden-sm');
+            }
+
+            // Target user is from current route or current session user
+            const route = frappe.get_route ? frappe.get_route() : [];
+            const targetUser = (route && route[0] === 'user-profile' && route[1]) ? route[1] : frappe.session.user;
+
+            // 1. Inject Upload Photo button under avatar if not present
+            if (!$sidebar.find('.clp-profile-upload-btn').length) {
+                const $btn = $(`
+                    <div class="clp-photo-btn-wrapper" style="text-align: left; margin: 8px 0 12px 0;">
+                        <button type="button" class="btn btn-sm clp-profile-upload-btn">
+                            <i class="fa fa-camera"></i> <span>📷 Upload Photo</span>
+                        </button>
+                    </div>
+                `);
+                if ($imgContainer.length) {
+                    $imgContainer.after($btn);
+                } else {
+                    $sidebar.prepend($btn);
+                }
+            }
+
+            // 2. Inject Upload Photo link in .profile-links if not present
+            const $links = $sidebar.find('.profile-links');
+            if ($links.length && !$links.find('.clp-profile-photo-link').length) {
+                $links.prepend(`
+                    <p style="margin-bottom: 8px;">
+                        <a class="clp-profile-photo-link">
+                            <i class="fa fa-camera"></i> <span>Upload Photo</span>
+                        </a>
+                    </p>
+                `);
+            }
+        }
+
+        // Delegate click for button, link, and circular avatar wrapper
+        $(document).off('click', '.clp-profile-upload-btn, .clp-profile-photo-link, .user-profile-sidebar .sidebar-image-wrapper').on('click', '.clp-profile-upload-btn, .clp-profile-photo-link, .user-profile-sidebar .sidebar-image-wrapper', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const route = frappe.get_route ? frappe.get_route() : [];
+            const targetUser = (route && route[0] === 'user-profile' && route[1]) ? route[1] : frappe.session.user;
+
+            new frappe.ui.FileUploader({
+                doctype: 'User',
+                docname: targetUser,
+                folder: 'Home/Attachments',
+                restrictions: {
+                    allowed_file_types: ['image/*']
+                },
+                on_success: (file_doc) => {
+                    frappe.call({
+                        method: 'clp.api.update_profile_photo',
+                        args: {
+                            photo_url: file_doc.file_url,
+                            user: targetUser
+                        },
+                        freeze: true,
+                        freeze_message: __('Updating profile photo...'),
+                        callback: (r) => {
+                            if (r.message && r.message.success) {
+                                frappe.show_alert({
+                                    message: __('Profile photo updated successfully!'),
+                                    indicator: 'green'
+                                });
+                                // Update visible avatar images immediately
+                                $('.sidebar-image, .user-profile-sidebar img, .avatar-frame img').attr('src', file_doc.file_url);
+                                setTimeout(() => window.location.reload(), 600);
+                            }
+                        }
+                    });
+                }
+            });
+        });
+
+        // Trigger on route changes and page loads
+        if (frappe.router && frappe.router.on) {
+            frappe.router.on('change', () => setTimeout(checkAndInjectProfilePhotoUpload, 300));
+        }
+        $(window).on('hashchange', () => setTimeout(checkAndInjectProfilePhotoUpload, 300));
+        $(document).on('page-change', () => setTimeout(checkAndInjectProfilePhotoUpload, 300));
+        setInterval(checkAndInjectProfilePhotoUpload, 800);
+        checkAndInjectProfilePhotoUpload();
+    }
+
     // Apply as early as possible
     applyHooks();
 
@@ -262,10 +359,12 @@ frappe.provide('clp');
         applyHooks();
         setupReRoutes();
         setupBottomSaveButton();
+        setupProfilePhotoEnhancements();
     });
     $(document).on('app_ready', function() {
         applyHooks();
         setupReRoutes();
         setupBottomSaveButton();
+        setupProfilePhotoEnhancements();
     });
 })();

@@ -498,3 +498,83 @@ label, .form-label, .control-label {
     min-height: 50px !important;
   }
 }
+
+/* --------------------------------------------------------------------------
+   13. Profile Photo Upload Styling (User Profile & Administrator)
+   -------------------------------------------------------------------------- */
+.user-profile-sidebar .user-image-container {
+  display: block !important;
+  margin-bottom: 16px !important;
+  visibility: visible !important;
+}
+
+.user-profile-sidebar .sidebar-image-wrapper {
+  position: relative !important;
+  display: inline-block !important;
+  border-radius: 50% !important;
+  overflow: hidden !important;
+  border: 4px solid var(--petrol-white) !important;
+  box-shadow: 0 4px 16px rgba(16, 27, 45, 0.15) !important;
+  width: 120px !important;
+  height: 120px !important;
+  background: var(--petrol-blue-light) !important;
+  cursor: pointer !important;
+}
+
+.user-profile-sidebar .sidebar-image-wrapper:hover::after {
+  content: "📷 Change Photo";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(16, 27, 45, 0.75);
+  color: #FFFFFF;
+  font-size: 11px;
+  font-weight: 600;
+  text-align: center;
+  padding: 4px 0;
+}
+
+.user-profile-sidebar .sidebar-image-wrapper img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+}
+
+.clp-profile-upload-btn {
+  margin: 10px 0 16px 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  background: linear-gradient(135deg, #1769AA 0%, #101B2D 100%) !important;
+  color: #FFFFFF !important;
+  border-radius: 20px !important;
+  padding: 8px 20px !important;
+  font-size: 13.5px !important;
+  font-weight: 600 !important;
+  box-shadow: 0 4px 12px rgba(23, 105, 170, 0.3) !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  border: none !important;
+  text-decoration: none !important;
+}
+
+.clp-profile-upload-btn:hover {
+  transform: translateY(-1px) scale(1.02) !important;
+  box-shadow: 0 6px 16px rgba(23, 105, 170, 0.45) !important;
+  color: #FFFFFF !important;
+}
+
+.clp-profile-photo-link {
+  color: #1769AA !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+}
+
+.clp-profile-photo-link:hover {
+  text-decoration: underline !important;
+  color: #135488 !important;
+}

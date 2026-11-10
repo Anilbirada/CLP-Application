@@ -1661,3 +1661,26 @@ def get_staff_list(petrol_pump=None):
     return frappe.db.sql(query, params, as_dict=1)
 
 
+@frappe.whitelist()
+def update_profile_photo(photo_url, user=None):
+    """Update profile photo (user_image) for current or specified user."""
+    target_user = user or frappe.session.user
+    if target_user != frappe.session.user and not (
+        _has_role("System Manager") or _has_role("Pump Owner")
+    ):
+        frappe.throw(_("Not permitted to change other users' profile photo"), frappe.PermissionError)
+
+    if not photo_url:
+        frappe.throw(_("Photo URL required"))
+
+    frappe.db.set_value("User", target_user, "user_image", photo_url, update_modified=True)
+    frappe.clear_cache(user=target_user)
+
+    return {
+        "success": True,
+        "user": target_user,
+        "user_image": photo_url
+    }
+
+
+
