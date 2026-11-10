@@ -163,6 +163,97 @@ frappe.provide('clp');
         frappe.router.routes['gift-stock-transfer'] = { doctype: 'Gift Stock Request' };
     }
 
+    // 7. Universal Bottom-Center Save / Primary Action Button for All Forms
+    function setupBottomSaveButton() {
+        if (!window.frappe) return;
+
+        function updateBottomButton() {
+            let $container = $('#clp-bottom-save-container');
+            if (!$container.length) {
+                $('body').append(`
+                    <div id="clp-bottom-save-container" style="display:none;">
+                        <button type="button" id="clp-bottom-save-btn" class="btn" aria-label="Save">
+                            <span class="btn-icon">💾</span>
+                            <span class="btn-text">Save</span>
+                        </button>
+                    </div>
+                `);
+                $container = $('#clp-bottom-save-container');
+
+                $(document).on('click', '#clp-bottom-save-btn', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    // Animate click feedback
+                    $(this).css('transform', 'scale(0.95)');
+                    setTimeout(() => $(this).css('transform', ''), 150);
+
+                    // 1. If active cur_frm, trigger save
+                    if (window.cur_frm && typeof cur_frm.save === 'function') {
+                        cur_frm.save();
+                        return;
+                    }
+
+                    // 2. Fallback to trigger top primary-action
+                    const $primary = $('.page-container:visible .page-head .primary-action:visible, .page-container:visible .standard-actions .primary-action:visible').first();
+                    if ($primary.length) {
+                        $primary.trigger('click');
+                    }
+                });
+            }
+
+            // Check if we are currently on a form page with a visible primary action
+            const isFormView = Boolean(window.cur_frm && cur_frm.$wrapper && cur_frm.$wrapper.is(':visible'));
+            const $topPrimary = $('.page-container:visible .page-head .primary-action, .page-container:visible .standard-actions .primary-action').first();
+
+            if (isFormView && $topPrimary.length && $topPrimary.is(':visible')) {
+                const rawText = ($topPrimary.text() || 'Save').trim();
+                const isDisabled = $topPrimary.prop('disabled');
+                const $btn = $('#clp-bottom-save-btn');
+
+                $btn.find('.btn-text').text(rawText);
+
+                // Set relevant icon based on action
+                let icon = '💾';
+                const lower = rawText.toLowerCase();
+                if (lower.includes('submit')) icon = '🚀';
+                else if (lower.includes('update')) icon = '🔄';
+                else if (lower.includes('saved')) icon = '✓';
+                else if (lower.includes('saving')) icon = '⏳';
+                $btn.find('.btn-icon').text(icon);
+
+                if (lower === 'saved') {
+                    $btn.addClass('btn-saved');
+                } else {
+                    $btn.removeClass('btn-saved');
+                }
+
+                $btn.prop('disabled', isDisabled);
+                if (!$container.is(':visible')) {
+                    $container.stop(true, true).fadeIn(200);
+                }
+            } else {
+                if ($container.is(':visible')) {
+                    $container.stop(true, true).fadeOut(200);
+                }
+            }
+        }
+
+        // Event hooks
+        if (frappe.router && frappe.router.on) {
+            frappe.router.on('change', () => setTimeout(updateBottomButton, 250));
+        }
+        $(window).on('hashchange', () => setTimeout(updateBottomButton, 250));
+        $(document).on('form-refresh page-change after_save', () => setTimeout(updateBottomButton, 150));
+        $(document).on('input change', 'input, select, textarea', () => setTimeout(updateBottomButton, 150));
+
+        // Periodic sync to track form state changes (500ms)
+        setInterval(updateBottomButton, 500);
+
+        // Immediate first check
+        updateBottomButton();
+    }
+
     // Apply as early as possible
     applyHooks();
 
@@ -170,9 +261,11 @@ frappe.provide('clp');
     $(document).ready(function() {
         applyHooks();
         setupReRoutes();
+        setupBottomSaveButton();
     });
     $(document).on('app_ready', function() {
         applyHooks();
         setupReRoutes();
+        setupBottomSaveButton();
     });
 })();
