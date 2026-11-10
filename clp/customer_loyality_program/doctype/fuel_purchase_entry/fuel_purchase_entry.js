@@ -66,6 +66,10 @@ frappe.ui.form.on('Fuel Purchase Entry', {
             show_pump_stock(frm);
         }
 
+        // Hide amount and fuel_type from attendant view while preserving in DB
+        frm.set_df_property('amount', 'hidden', 1);
+        frm.set_df_property('fuel_type', 'hidden', 1);
+
         // Feature 2 & 5: Bottom Save button & streamlined refuel workflow
         render_bottom_save_button(frm);
     },
@@ -269,6 +273,9 @@ function render_bottom_save_button(frm) {
     `);
 
     container.find('.clp-btn-bottom-save').on('click', function() {
+        const $btn = $(this);
+        if ($btn.data('is_submitting')) return;
+
         if (!frm.doc.customer) {
             frappe.msgprint(__('Please select or scan a Customer ID first.'));
             return;
@@ -281,7 +288,17 @@ function render_bottom_save_button(frm) {
             frappe.msgprint(__('Please enter valid refuel Liters (greater than 0).'));
             return;
         }
-        frm.savesubmit();
+
+        $btn.data('is_submitting', true);
+        $btn.prop('disabled', true).html('⏳ Saving & Submitting...');
+
+        frm.savesubmit(null, function() {
+            // Success
+        }, function() {
+            // Failure / Re-enable
+            $btn.data('is_submitting', false);
+            $btn.prop('disabled', false).html('💾 Save & Submit Purchase');
+        });
     });
 
     container.find('.clp-btn-next-customer').on('click', function() {

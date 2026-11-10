@@ -53,32 +53,21 @@ class GiftStockRequest(Document):
             self.create_stock_entry()
     
     def create_stock_entry(self):
-        """Record transfer in CLP Gift Stock Ledger and optional ERPNext stock entry"""
+        """Record transfer in ERPNext and CLP Gift Stock Ledger without double movement"""
         from clp.stock import record_gift_stock_movement
-        # Outgoing from source pump
-        record_gift_stock_movement(
-            pump=self.source_pump,
-            item_code=self.gift_item,
-            qty_change=-float(self.quantity),
-            voucher_type="Stock Transfer Out",
-            voucher_no=self.name,
-            remarks=f"Transfer to {self.requesting_pump}: {self.name}"
-        )
-        # Incoming to destination pump
-        record_gift_stock_movement(
-            pump=self.requesting_pump,
-            item_code=self.gift_item,
-            qty_change=float(self.quantity),
-            voucher_type="Stock Transfer In",
-            voucher_no=self.name,
-            remarks=f"Transfer from {self.source_pump}: {self.name}"
-        )
+        is_erpnext = "erpnext" in frappe.get_installed_apps() and frappe.db.exists("DocType", "Stock Entry")
+        stock_entry_created = False
 
-        try:
-            if frappe.db.exists("DocType", "Stock Entry"):
+        if is_erpnext and self.source_warehouse and self.requesting_warehouse:
+            try:
+                company = frappe.defaults.get_defaults().get("company")
+                if not company and frappe.db.exists("DocType", "Company"):
+                    company = frappe.db.get_single_value("Global Defaults", "default_company") or frappe.db.get_value("Company", {}, "name")
+
                 stock_entry = frappe.get_doc({
                     "doctype": "Stock Entry",
                     "stock_entry_type": "Material Transfer",
+                    "company": company,
                     "is_gift_transfer": 1,
                     "from_pump": self.source_pump,
                     "to_pump": self.requesting_pump,
@@ -94,8 +83,30 @@ class GiftStockRequest(Document):
                 stock_entry.insert()
                 stock_entry.submit()
                 self.db_set("stock_entry", stock_entry.name)
-        except Exception as e:
-            frappe.log_error(f"Optional ERPNext Stock Entry skipped: {e}", "Gift Stock Transfer")
+                stock_entry_created = True
+            except Exception as e:
+                frappe.log_error(f"ERPNext Stock Transfer creation skipped: {e}", "Gift Stock Transfer")
+
+        # Outgoing from source pump
+        record_gift_stock_movement(
+            pump=self.source_pump,
+            item_code=self.gift_item,
+            qty_change=-float(self.quantity),
+            voucher_type="Stock Transfer Out",
+            voucher_no=self.name,
+            remarks=f"Transfer to {self.requesting_pump}: {self.name}",
+            skip_bin_sync=stock_entry_created
+        )
+        # Incoming to destination pump
+        record_gift_stock_movement(
+            pump=self.requesting_pump,
+            item_code=self.gift_item,
+            qty_change=float(self.quantity),
+            voucher_type="Stock Transfer In",
+            voucher_no=self.name,
+            remarks=f"Transfer from {self.source_pump}: {self.name}",
+            skip_bin_sync=stock_entry_created
+        )
 
         self.db_set("status", "Completed")
         frappe.msgprint(_("✅ Stock transfer of {0} units recorded from {1} to {2}.").format(
@@ -103,15 +114,28 @@ class GiftStockRequest(Document):
         ), indicator="green")
 
     def on_cancel(self):
-        """Reverse stock transfer on cancellation"""
+        """Reverse stock transfer on cancellation and cancel ERPNext stock entry"""
         from clp.stock import record_gift_stock_movement
+        has_se_cancelled = False
+
+        if self.stock_entry:
+            try:
+                se = frappe.get_doc("Stock Entry", self.stock_entry)
+                if se.docstatus == 1:
+                    se.cancel()
+                    has_se_cancelled = True
+                    frappe.msgprint(_("Linked ERPNext Stock Transfer entry cancelled"), indicator="blue")
+            except Exception as e:
+                frappe.log_error(f"Failed to cancel stock entry {self.stock_entry}: {e}", "Gift Stock Transfer Cancel")
+
         record_gift_stock_movement(
             pump=self.source_pump,
             item_code=self.gift_item,
             qty_change=float(self.quantity),
             voucher_type="Stock Transfer In",
             voucher_no=self.name,
-            remarks=f"Reversal of cancelled transfer to {self.requesting_pump}: {self.name}"
+            remarks=f"Reversal of cancelled transfer to {self.requesting_pump}: {self.name}",
+            skip_bin_sync=has_se_cancelled
         )
         record_gift_stock_movement(
             pump=self.requesting_pump,
@@ -119,7 +143,10 @@ class GiftStockRequest(Document):
             qty_change=-float(self.quantity),
             voucher_type="Stock Transfer Out",
             voucher_no=self.name,
-            remarks=f"Reversal of cancelled transfer from {self.source_pump}: {self.name}"
+            remarks=f"Reversal of cancelled transfer from {self.source_pump}: {self.name}",
+            skip_bin_sync=has_se_cancelled
         )
+        self.db_set("status", "Cancelled")
         frappe.msgprint(_("Reversed stock transfer of {0} units.").format(self.quantity), indicator="blue")
+
 

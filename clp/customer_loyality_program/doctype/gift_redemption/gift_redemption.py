@@ -160,7 +160,20 @@ class GiftRedemption(Document):
                 indicator='blue'
             )
 
-        # Reverse gift stock ledger movements
+        # Cancel stock entry if created (reverses ERPNext inventory automatically)
+        has_se_cancelled = False
+        if self.stock_entry:
+            try:
+                se = frappe.get_doc("Stock Entry", self.stock_entry)
+                if se.docstatus == 1:
+                    se.cancel()
+                    has_se_cancelled = True
+                    frappe.msgprint(_("Stock entry cancelled and inventory restored in ERPNext"), indicator='blue')
+            except Exception as e:
+                frappe.log_error(f"Failed to cancel stock entry: {e}", "Gift Redemption Cancel")
+
+        # Record reversal in CLP Gift Stock Ledger
+        # skip_bin_sync is True if ERPNext Stock Entry was cancelled to prevent double inventory restoration
         from clp.stock import record_gift_stock_movement
         for item in self.items:
             record_gift_stock_movement(
@@ -169,18 +182,9 @@ class GiftRedemption(Document):
                 qty_change=1.0,
                 voucher_type="Stock Addition",
                 voucher_no=self.name,
-                remarks=f"Reversal of Gift Redemption: {self.name}"
+                remarks=f"Reversal of Gift Redemption: {self.name}",
+                skip_bin_sync=has_se_cancelled
             )
-        
-        # Cancel stock entry if created
-        if self.stock_entry:
-            try:
-                se = frappe.get_doc("Stock Entry", self.stock_entry)
-                if se.docstatus == 1:
-                    se.cancel()
-                    frappe.msgprint(_("Stock entry cancelled"), indicator='blue')
-            except Exception as e:
-                frappe.log_error(f"Failed to cancel stock entry: {e}", "Gift Redemption Cancel")
     
     def on_trash(self):
         """Prevent deletion if submitted"""
@@ -188,21 +192,17 @@ class GiftRedemption(Document):
             frappe.throw(_("Cannot delete submitted Gift Redemption. Please cancel it first."))
     
     def create_gift_stock_entry(self):
-        """Create CLP Gift Stock Ledger entry and optional ERPNext stock entry for all gift items"""
+        """
+        Execute inventory movement:
+        1. Create & submit ERPNext Stock Entry (Material Issue) as authoritative inventory record.
+        2. Record business history in CLP Gift Stock Ledger without duplicating Bin movements.
+        """
         from clp.stock import record_gift_stock_movement
-        for item in self.items:
-            record_gift_stock_movement(
-                pump=self.petrol_pump,
-                item_code=item.gift_item,
-                qty_change=-1.0,
-                voucher_type="Gift Redemption",
-                voucher_no=self.name,
-                remarks=f"Redeemed by {self.customer_name or self.customer} (Vehicle: {self.vehicle_number or 'N/A'})"
-            )
+        is_erpnext = "erpnext" in frappe.get_installed_apps() and frappe.db.exists("DocType", "Stock Entry")
+        stock_entry_created = False
 
-        # Optional ERPNext Stock Entry
-        try:
-            if frappe.db.exists("DocType", "Stock Entry"):
+        if is_erpnext and self.warehouse:
+            try:
                 stock_items = []
                 for item in self.items:
                     stock_items.append({
@@ -211,10 +211,14 @@ class GiftRedemption(Document):
                         "s_warehouse": self.warehouse
                     })
                 
+                company = frappe.defaults.get_defaults().get("company")
+                if not company and frappe.db.exists("DocType", "Company"):
+                    company = frappe.db.get_single_value("Global Defaults", "default_company") or frappe.db.get_value("Company", {}, "name")
+
                 se = frappe.get_doc({
                     "doctype": "Stock Entry",
                     "stock_entry_type": "Material Issue",
-                    "company": frappe.defaults.get_defaults().get("company"),
+                    "company": company,
                     "posting_date": self.redemption_date or frappe.utils.today(),
                     "remarks": f"Gift Redemption {self.name} - {self.customer} - {len(self.items)} items",
                     "items": stock_items
@@ -223,6 +227,19 @@ class GiftRedemption(Document):
                 se.insert()
                 se.submit()
                 self.db_set("stock_entry", se.name, update_modified=False)
-        except Exception as e:
-            frappe.log_error(f"ERPNext Stock Entry optional creation skipped: {str(e)}", "Gift Redemption")
+                stock_entry_created = True
+            except Exception as e:
+                frappe.log_error(f"ERPNext Stock Entry creation skipped: {str(e)}", "Gift Redemption")
+
+        # Record CLP Gift Stock Ledger entries (skip direct Bin sync if ERPNext Stock Entry already decremented it)
+        for item in self.items:
+            record_gift_stock_movement(
+                pump=self.petrol_pump,
+                item_code=item.gift_item,
+                qty_change=-1.0,
+                voucher_type="Gift Redemption",
+                voucher_no=self.name,
+                remarks=f"Redeemed by {self.customer_name or self.customer} (Vehicle: {self.vehicle_number or 'N/A'})",
+                skip_bin_sync=stock_entry_created
+            )
 

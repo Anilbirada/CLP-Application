@@ -341,5 +341,6 @@ doc_events = {
     "Gift Redemption": {"after_insert": "clp.audit.log_doc_event", "on_submit": "clp.audit.log_doc_event", "on_cancel": "clp.audit.log_doc_event"},
     "Gift Stock Request": {"after_insert": "clp.audit.log_doc_event", "on_submit": "clp.audit.log_doc_event", "on_cancel": "clp.audit.log_doc_event"},
     "User": {"on_update": "clp.audit.log_doc_event"},
-    "Referral Reward Entry": {"after_insert": "clp.audit.log_doc_event", "on_update": "clp.audit.log_doc_event"}
+    "Referral Reward Entry": {"after_insert": "clp.audit.log_doc_event", "on_update": "clp.audit.log_doc_event"},
+    "CLP Customer Balance Adjustment": {"after_insert": "clp.audit.log_doc_event", "on_submit": "clp.audit.log_doc_event", "on_cancel": "clp.audit.log_doc_event"}
 }

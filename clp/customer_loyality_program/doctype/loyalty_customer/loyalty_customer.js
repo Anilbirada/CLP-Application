@@ -48,7 +48,9 @@ frappe.ui.form.on('Loyalty Customer', {
             
             // Add customer portal link button
             frm.add_custom_button(__('Customer Portal Link'), function() {
-                let portal_url = `${window.location.origin}/loyalty/check?vehicle=${encodeURIComponent(frm.doc.vehicle_number)}&mobile=${encodeURIComponent(frm.doc.mobile_number)}`;
+                let portal_url = frm.doc.qr_access_token 
+                    ? `${window.location.origin}/loyality/check?token=${encodeURIComponent(frm.doc.qr_access_token)}`
+                    : `${window.location.origin}/loyality/check?vehicle=${encodeURIComponent(frm.doc.vehicle_number)}&mobile=${encodeURIComponent(frm.doc.mobile_number)}`;
                 
                 let d = new frappe.ui.Dialog({
                     title: __('Customer Portal Link'),
@@ -102,9 +104,24 @@ frappe.ui.form.on('Loyalty Customer', {
         }
     },
     
+    validate: function(frm) {
+        if (frm.doc.vehicle_number && frm.doc.vehicle_number.indexOf(' ') !== -1) {
+            frappe.throw(__('Vehicle number must not contain spaces. Please enter in continuous format e.g. MH04GF6292.'));
+        }
+        if (frm.is_new() && !frm.doc.registration_pump) {
+            frappe.throw(__('Petrol Pump selection is required for new customer registration.'));
+        }
+    },
+
     vehicle_number: function(frm) {
-        // Auto-uppercase vehicle number
-        if (frm.doc.vehicle_number) {
+        if (frm.doc.vehicle_number && frm.doc.vehicle_number.indexOf(' ') !== -1) {
+            frappe.msgprint({
+                title: __('Invalid Vehicle Number'),
+                message: __('Vehicle number must not contain spaces. Please enter in continuous format e.g. MH04GF6292.'),
+                indicator: 'orange'
+            });
+            frm.set_value('vehicle_number', frm.doc.vehicle_number.replace(/\s+/g, '').toUpperCase());
+        } else if (frm.doc.vehicle_number) {
             frm.set_value('vehicle_number', frm.doc.vehicle_number.toUpperCase());
         }
     }

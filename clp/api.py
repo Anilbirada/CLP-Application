@@ -83,17 +83,44 @@ def check_customer_exists(customer_id):
 
 @frappe.whitelist()
 def scan_and_process_qr(qr_data):
-    """Process scanned QR code"""
+    """
+    Process scanned QR code or customer token.
+    Robustly extracts customer from token query parameter (?token=...), legacy ?id=...,
+    raw customer ID (e.g. MANUAL-0001), or raw QR access token.
+    """
+    from urllib.parse import urlparse, parse_qs
     _require_clp_staff({"System Manager", "Pump Owner", "Pump Manager", "CLM Incharge"})
     if not qr_data or len(qr_data) > 2048:
         frappe.throw(_("Invalid QR data"))
-    # Extract customer ID from URL
-    if '?id=' in qr_data:
-        customer_id = qr_data.split('?id=')[1]
-    else:
-        customer_id = qr_data.split('/')[-1]
     
-    # Use check_customer_exists function
+    clean_data = str(qr_data).strip()
+    customer_id = None
+
+    # 1. URL parsing
+    if "://" in clean_data or clean_data.startswith("/") or "?" in clean_data:
+        try:
+            parsed = urlparse(clean_data)
+            qs = parse_qs(parsed.query)
+            if "token" in qs and qs["token"]:
+                token = qs["token"][0].strip()
+                customer_id = frappe.db.get_value("Loyalty Customer", {"qr_access_token": token, "status": "Active"}, "name")
+            elif "id" in qs and qs["id"]:
+                customer_id = qs["id"][0].strip()
+            elif parsed.path:
+                potential = parsed.path.rstrip("/").split("/")[-1]
+                if potential and potential not in ("check", "loyalty", "loyality", "qr-redirect"):
+                    customer_id = potential
+        except Exception:
+            pass
+
+    # 2. Direct token lookup if high-entropy token (30+ characters)
+    if not customer_id and len(clean_data) >= 30 and not clean_data.startswith("MANUAL-") and not clean_data.startswith("QR-"):
+        customer_id = frappe.db.get_value("Loyalty Customer", {"qr_access_token": clean_data, "status": "Active"}, "name")
+
+    # 3. Direct ID lookup
+    if not customer_id:
+        customer_id = clean_data
+
     return check_customer_exists(customer_id)
 
 @frappe.whitelist()
@@ -509,13 +536,15 @@ def get_gift_stock_data(pump=None, item=None, status=None):
 
 @frappe.whitelist()
 def adjust_gift_stock(item_code, warehouse, qty, action, reason):
-    """Adjust gift stock - add or remove, with server-side role enforcement."""
+    """Adjust gift stock - add or remove, strictly restricted to Pump Owners & System Managers."""
     action = (action or "").lower().strip()
     if action not in ("add", "remove"):
-        frappe.throw(_("Action must be add or remove"))
-    required_role = "CLP Stock Add" if action == "add" else "CLP Stock Subtract"
-    if not (_has_role("System Manager") or _has_role("Pump Owner") or _has_role(required_role)):
-        frappe.throw(_("You do not have permission to {0} gift stock").format(action), frappe.PermissionError)
+        frappe.throw(_("Action must be 'add' or 'remove'"))
+    
+    # Requirement: Stock operations restricted to owners
+    if not (_has_role("System Manager") or _has_role("Pump Owner")):
+        frappe.throw(_("Only Pump Owners and System Managers are authorized to adjust gift stock."), frappe.PermissionError)
+    
     try:
         qty = float(qty)
     except (TypeError, ValueError):
@@ -538,48 +567,69 @@ def adjust_gift_stock(item_code, warehouse, qty, action, reason):
     if not pump:
         pump = frappe.db.get_value("Petrol Pump Location", warehouse, "name") or warehouse
 
+    # Validate stock on subtraction to prevent negative inventory
+    if action == "remove":
+        current_stock = 0.0
+        if frappe.db.exists("DocType", "Bin"):
+            current_stock = frappe.db.get_value("Bin", {"item_code": item_code, "warehouse": warehouse}, "actual_qty") or 0.0
+        else:
+            from clp.stock import get_pump_gift_stock_balance
+            current_stock = get_pump_gift_stock_balance(pump, item_code)
+        
+        if float(current_stock) < qty:
+            frappe.throw(_("Cannot remove {0} units; available stock at {1} is only {2} units.").format(
+                qty, warehouse, current_stock
+            ))
+
     qty_change = qty if action == "add" else -qty
     voucher_type = "Stock Addition" if action == "add" else "Stock Subtraction"
 
-    # 1. Primary: Record in CLP Gift Stock Ledger and synchronize tabBin
-    from clp.stock import record_gift_stock_movement
-    ledger_entry = record_gift_stock_movement(
-        pump=pump,
-        item_code=item_code,
-        qty_change=qty_change,
-        voucher_type=voucher_type,
-        voucher_no="",
-        remarks=f"Gift Stock Adjustment: {reason}",
-        user=frappe.session.user
-    )
-
-    stock_entry_name = ledger_entry.name if ledger_entry else None
-
-    # 2. Optional: If ERPNext is installed, record Stock Entry
+    # 1. Authoritative ERPNext Stock Entry (if installed)
+    stock_entry_created = False
+    stock_entry_name = None
     if "erpnext" in frappe.get_installed_apps() and frappe.db.exists("DocType", "Stock Entry"):
         try:
+            company = frappe.defaults.get_defaults().company
+            if not company and frappe.db.exists("DocType", "Company"):
+                company = frappe.db.get_single_value("Global Defaults", "default_company") or frappe.db.get_value("Company", {}, "name")
+
             stock_entry = frappe.get_doc({
                 "doctype": "Stock Entry",
                 "stock_entry_type": "Material Receipt" if action == "add" else "Material Issue",
-                "company": frappe.defaults.get_defaults().company,
+                "company": company,
                 "remarks": f"Gift Stock Adjustment: {reason}",
                 "items": [{
                     "item_code": item_code,
                     "qty": qty,
                     "t_warehouse": warehouse if action == "add" else None,
                     "s_warehouse": warehouse if action == "remove" else None,
-                    "cost_center": frappe.db.get_value("Company", frappe.defaults.get_defaults().company, "cost_center")
+                    "cost_center": frappe.db.get_value("Company", company, "cost_center") if company else None
                 }]
             })
+            stock_entry.flags.ignore_permissions = True
             stock_entry.insert()
             stock_entry.submit()
             stock_entry_name = stock_entry.name
+            stock_entry_created = True
         except Exception as e:
             frappe.log_error(f"Optional ERPNext Stock Entry skipped: {e}", "Stock Adjustment")
 
+    # 2. Record CLP Gift Stock Ledger entry (skip direct Bin sync if ERPNext already handled it)
+    from clp.stock import record_gift_stock_movement
+    ledger_entry = record_gift_stock_movement(
+        pump=pump,
+        item_code=item_code,
+        qty_change=qty_change,
+        voucher_type=voucher_type,
+        voucher_no=stock_entry_name or "",
+        remarks=f"Gift Stock Adjustment: {reason}",
+        user=frappe.session.user,
+        skip_bin_sync=stock_entry_created
+    )
+
     return {
         "success": True,
-        "stock_entry": stock_entry_name
+        "stock_entry": stock_entry_name or (ledger_entry.name if ledger_entry else None)
     }
 
 
@@ -847,6 +897,10 @@ def get_whatsapp_link(customer_id, pump_name=None):
     if not pump_name:
         pump_name = "our pump"
     
+    site_url = frappe.utils.get_url() or "https://clp.hiideals.com"
+    token = customer.qr_access_token
+    portal_link = f"{site_url}/loyality/check?token={quote(token)}" if token else f"{site_url}/loyality/check"
+
     # Build message
     message = f"""Hello {customer.customer_name}! 🎉
 
@@ -857,7 +911,7 @@ Your Loyalty Program Status:
 📊 Total Fuel Purchased: {customer.total_liters_purchased}L
 
 Check your points anytime here:
-https://clm.abmtech.in/loyality/check
+{portal_link}
 
 Thank you for choosing {pump_name}!
 
@@ -878,12 +932,13 @@ Keep fueling with us! ⛽"""
 
 @frappe.whitelist(allow_guest=True)
 @rate_limit(limit=30, seconds=60, ip_based=True)
-def check_loyalty_points(vehicle=None, mobile=None):
-    """Public API to check loyalty points - accepts vehicle, mobile number, or both with smart auto-detection."""
+def check_loyalty_points(vehicle=None, mobile=None, token=None):
+    """Public API to check loyalty points - accepts vehicle, mobile number, or token with smart auto-detection."""
     import re
     
     clean_vehicle = str(vehicle or '').strip()
     clean_mobile = str(mobile or '').strip()
+    clean_token = str(token or '').strip()
 
     # Smart auto-detection: if mobile looks like a vehicle or vehicle looks like a mobile
     digits_in_vehicle = re.sub(r'\D', '', clean_vehicle)
@@ -908,19 +963,32 @@ def check_loyalty_points(vehicle=None, mobile=None):
         'redemptions': []
     }
 
-    if not norm_vehicle and not norm_mobile:
-        result['error'] = "Please provide your vehicle number or 10-digit mobile number."
+    if not norm_vehicle and not norm_mobile and not clean_token:
+        result['error'] = "Please provide your vehicle number, 10-digit mobile number, or access token."
         return result
 
     try:
         customer_record = None
 
+        # 0. Search by QR access token if provided
+        if clean_token:
+            token_matches = frappe.db.sql("""
+                SELECT name, customer_name, vehicle_number, mobile_number,
+                       current_cycle_liters, total_liters_purchased, total_gifts_received,
+                       registration_date, referral_points_balance, qr_access_token
+                FROM `tabLoyalty Customer`
+                WHERE qr_access_token = %s
+                LIMIT 1
+            """, (clean_token,), as_dict=1)
+            if token_matches:
+                customer_record = token_matches[0]
+
         # 1. Search by mobile number if provided
-        if norm_mobile and len(norm_mobile) >= 7:
+        if not customer_record and norm_mobile and len(norm_mobile) >= 7:
             mobile_matches = frappe.db.sql("""
                 SELECT name, customer_name, vehicle_number, mobile_number,
                        current_cycle_liters, total_liters_purchased, total_gifts_received,
-                       registration_date, referral_points_balance
+                       registration_date, referral_points_balance, qr_access_token
                 FROM `tabLoyalty Customer`
                 WHERE RIGHT(REPLACE(REPLACE(mobile_number, ' ', ''), '-', ''), 10) = %s
                    OR mobile_number LIKE %s
@@ -935,7 +1003,7 @@ def check_loyalty_points(vehicle=None, mobile=None):
             vehicle_matches = frappe.db.sql("""
                 SELECT name, customer_name, vehicle_number, mobile_number,
                        current_cycle_liters, total_liters_purchased, total_gifts_received,
-                       registration_date, referral_points_balance
+                       registration_date, referral_points_balance, qr_access_token
                 FROM `tabLoyalty Customer`
                 WHERE REPLACE(REPLACE(REPLACE(UPPER(vehicle_number), ' ', ''), '-', ''), '.', '') = %s
                    OR UPPER(name) = %s
@@ -958,7 +1026,7 @@ def check_loyalty_points(vehicle=None, mobile=None):
                 cust_doc = frappe.db.sql("""
                     SELECT name, customer_name, vehicle_number, mobile_number,
                            current_cycle_liters, total_liters_purchased, total_gifts_received,
-                           registration_date, referral_points_balance
+                           registration_date, referral_points_balance, qr_access_token
                     FROM `tabLoyalty Customer`
                     WHERE name = %s
                     LIMIT 1
@@ -970,15 +1038,46 @@ def check_loyalty_points(vehicle=None, mobile=None):
             searched_terms = []
             if norm_vehicle: searched_terms.append(f"vehicle '{clean_vehicle}'")
             if norm_mobile: searched_terms.append(f"mobile '{clean_mobile}'")
+            if clean_token: searched_terms.append("access token")
             result['error'] = f"No customer found matching {' or '.join(searched_terms)}. Please check the number or contact pump support."
             return result
+
+        # Check authorization for masking sensitive customer PII
+        is_authorized = False
+        if frappe.session.user != "Guest":
+            user_roles = set(frappe.get_roles())
+            if user_roles & CLP_STAFF_ROLES:
+                is_authorized = True
+
+        if not is_authorized and clean_token and customer_record.get('qr_access_token') == clean_token:
+            is_authorized = True
+
+        raw_mobile = customer_record.get('mobile_number') or ''
+        raw_name = customer_record.get('customer_name') or 'Valued Customer'
+
+        if is_authorized:
+            display_mobile = raw_mobile or 'N/A'
+            display_name = raw_name
+        else:
+            # Mask phone number to prevent enumeration: ******1234
+            digits = re.sub(r'\D', '', raw_mobile)
+            if len(digits) > 4:
+                display_mobile = ("*" * (len(digits) - 4)) + digits[-4:]
+            else:
+                display_mobile = "****"
+            # Mask customer name partially for guest privacy
+            parts = raw_name.strip().split()
+            if len(parts) == 1:
+                display_name = parts[0][0] + ("*" * max(1, len(parts[0]) - 2)) + parts[0][-1] if len(parts[0]) > 2 else parts[0]
+            else:
+                display_name = parts[0] + " " + parts[-1][0] + "***"
 
         result['found'] = True
         result['customer'] = {
             'name': customer_record['name'],
-            'customer_name': customer_record['customer_name'] or 'Valued Customer',
+            'customer_name': display_name,
             'vehicle_number': customer_record['vehicle_number'] or 'N/A',
-            'mobile_number': customer_record['mobile_number'] or 'N/A',
+            'mobile_number': display_mobile,
             'current_cycle_liters': round(float(customer_record.get('current_cycle_liters') or 0.0), 2),
             'total_liters_purchased': round(float(customer_record.get('total_liters_purchased') or 0.0), 2),
             'total_gifts_received': int(customer_record.get('total_gifts_received') or 0),
@@ -1399,4 +1498,161 @@ def update_customer_profile(token, customer_name=None, vehicle_number=None):
             "total_gifts_received": doc.total_gifts_received
         }
     }
+
+
+# ============================================================================
+# Staff Account Management (Owner-Only RPCs)
+# ============================================================================
+
+def _require_owner_or_manager():
+    """Ensure user is System Manager or Pump Owner."""
+    if frappe.session.user == "Guest":
+        frappe.throw(_("Please sign in to perform this operation."), frappe.PermissionError)
+    roles = set(frappe.get_roles())
+    if not (roles & {"System Manager", "Pump Owner"}):
+        frappe.throw(_("Only Pump Owners or System Managers can manage staff accounts."), frappe.PermissionError)
+
+
+@frappe.whitelist()
+def create_staff_account(email, first_name, last_name=None, mobile_no=None, pump=None, role="CLM Incharge"):
+    """
+    Create a new staff user account with designated CLP role and pump location.
+    Enforces Owner-only access (Pump Owner / System Manager).
+    """
+    _require_owner_or_manager()
+
+    if not email or "@" not in email:
+        frappe.throw(_("A valid email address is required for staff account creation."))
+    if not first_name:
+        frappe.throw(_("First name is required."))
+
+    email = email.strip().lower()
+    first_name = first_name.strip()
+    last_name = (last_name or "").strip()
+    mobile_no = (mobile_no or "").strip()
+
+    allowed_roles = {
+        "Pump Manager", "CLM Incharge", "CLP Stock Add",
+        "CLP Stock Subtract", "CLP Stock Transfer", "CLP Reports Viewer"
+    }
+    if role not in allowed_roles and not _has_role("System Manager"):
+        frappe.throw(_("Role must be one of: {0}").format(", ".join(sorted(allowed_roles))))
+
+    if pump and not frappe.db.exists("Petrol Pump Location", pump):
+        frappe.throw(_("Petrol Pump '{0}' does not exist.").format(pump))
+
+    is_new_user = False
+    if frappe.db.exists("User", email):
+        user = frappe.get_doc("User", email)
+        user.first_name = first_name
+        if last_name:
+            user.last_name = last_name
+        if mobile_no:
+            user.mobile_no = mobile_no
+        user.enabled = 1
+        user.save(ignore_permissions=True)
+    else:
+        is_new_user = True
+        user = frappe.get_doc({
+            "doctype": "User",
+            "email": email,
+            "first_name": first_name,
+            "last_name": last_name,
+            "mobile_no": mobile_no,
+            "user_type": "System User",
+            "send_welcome_email": 1,
+            "enabled": 1
+        })
+        user.insert(ignore_permissions=True)
+
+    user.add_roles(role)
+
+    if pump:
+        if frappe.db.exists("User Pump Settings", user.name):
+            ups = frappe.get_doc("User Pump Settings", user.name)
+            ups.default_pump = pump
+            ups.is_active = 1
+            ups.save(ignore_permissions=True)
+        else:
+            ups = frappe.get_doc({
+                "doctype": "User Pump Settings",
+                "user": user.name,
+                "default_pump": pump,
+                "is_active": 1
+            })
+            ups.insert(ignore_permissions=True)
+
+    return {
+        "success": True,
+        "message": _("Staff account {0} created/updated successfully.").format(email),
+        "user": user.name,
+        "role": role,
+        "pump": pump,
+        "is_new": is_new_user
+    }
+
+
+@frappe.whitelist()
+def deactivate_staff_account(user_id):
+    """
+    Deactivate a staff account by setting enabled = 0.
+    Preserves historical transaction integrity and audit logs.
+    """
+    _require_owner_or_manager()
+
+    if not frappe.db.exists("User", user_id):
+        frappe.throw(_("User '{0}' not found.").format(user_id))
+
+    if user_id == frappe.session.user:
+        frappe.throw(_("You cannot deactivate your own account."))
+
+    user = frappe.get_doc("User", user_id)
+    user.enabled = 0
+    user.save(ignore_permissions=True)
+
+    if frappe.db.exists("User Pump Settings", user_id):
+        frappe.db.set_value("User Pump Settings", user_id, "is_active", 0)
+
+    return {
+        "success": True,
+        "message": _("Staff account {0} has been deactivated.").format(user_id)
+    }
+
+
+@frappe.whitelist()
+def get_staff_list(petrol_pump=None):
+    """
+    Get list of staff users, their assigned roles, pumps, and active statuses.
+    Accessible only to Pump Owners and System Managers.
+    """
+    _require_owner_or_manager()
+
+    query = """
+        SELECT 
+            u.name as user_id,
+            u.full_name,
+            u.email,
+            u.mobile_no,
+            u.enabled,
+            ups.default_pump,
+            p.pump_name,
+            GROUP_CONCAT(DISTINCT r.role SEPARATOR ', ') as roles
+        FROM `tabUser` u
+        LEFT JOIN `tabUser Pump Settings` ups ON ups.user = u.name
+        LEFT JOIN `tabPetrol Pump Location` p ON p.name = ups.default_pump
+        LEFT JOIN `tabHas Role` r ON r.parent = u.name
+        WHERE u.user_type = 'System User'
+          AND u.name NOT IN ('Administrator', 'Guest')
+          AND r.role IN %(staff_roles)s
+    """
+    params = {'staff_roles': tuple(CLP_STAFF_ROLES)}
+
+    if petrol_pump:
+        query += " AND ups.default_pump = %(pump)s"
+        params['pump'] = petrol_pump
+
+    query += " GROUP BY u.name ORDER BY u.enabled DESC, u.full_name ASC"
+
+    return frappe.db.sql(query, params, as_dict=1)
+
 

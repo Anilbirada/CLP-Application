@@ -108,6 +108,7 @@
   {
    "fieldname": "amount",
    "fieldtype": "Currency",
+   "hidden": 1,
    "label": "Amount"
   },
   {
