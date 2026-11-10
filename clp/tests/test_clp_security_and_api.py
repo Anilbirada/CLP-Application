@@ -57,3 +57,20 @@ class TestCLPSecurityAndAPI(FrappeTestCase):
         res = scan_and_process_qr(qr_url)
         self.assertTrue(res.get("exists"))
         self.assertEqual(res.get("customer_id"), self.customer.name)
+
+    def test_vehicle_search_with_spaces_rejected(self):
+        """Vehicle number search containing spaces must be rejected with clear message."""
+        res = check_loyalty_points(vehicle="DL 01 AB 9999")
+        self.assertFalse(res.get("found"))
+        self.assertIn("must not contain spaces", res.get("error", ""))
+
+    def test_unauthorized_staff_creation_rejected(self):
+        """Guest and unauthorized roles cannot create staff accounts."""
+        from clp.api import create_staff_account
+        from frappe.exceptions import PermissionError
+
+        frappe.set_user("Guest")
+        with self.assertRaises(PermissionError):
+            create_staff_account("hacker@example.com", "Hacker", role="Pump Manager")
+        frappe.set_user("Administrator")
+

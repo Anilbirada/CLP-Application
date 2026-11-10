@@ -940,6 +940,19 @@ def check_loyalty_points(vehicle=None, mobile=None, token=None):
     clean_mobile = str(mobile or '').strip()
     clean_token = str(token or '').strip()
 
+    result = {
+        'found': False,
+        'error': '',
+        'customer': None,
+        'purchases': [],
+        'redemptions': []
+    }
+
+    # Requirement 8: Spaces in vehicle search must be rejected with a clear message
+    if vehicle and " " in str(vehicle).strip():
+        result['error'] = "Vehicle number must not contain spaces. Please enter in continuous format e.g. MH04GF6292."
+        return result
+
     # Smart auto-detection: if mobile looks like a vehicle or vehicle looks like a mobile
     digits_in_vehicle = re.sub(r'\D', '', clean_vehicle)
     if len(digits_in_vehicle) == 10 and not clean_mobile:
@@ -954,14 +967,6 @@ def check_loyalty_points(vehicle=None, mobile=None, token=None):
     norm_mobile = re.sub(r'\D', '', clean_mobile) if clean_mobile else None
     if norm_mobile and len(norm_mobile) > 10:
         norm_mobile = norm_mobile[-10:]
-
-    result = {
-        'found': False,
-        'error': '',
-        'customer': None,
-        'purchases': [],
-        'redemptions': []
-    }
 
     if not norm_vehicle and not norm_mobile and not clean_token:
         result['error'] = "Please provide your vehicle number, 10-digit mobile number, or access token."

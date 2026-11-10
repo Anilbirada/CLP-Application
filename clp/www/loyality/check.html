@@ -859,6 +859,12 @@
             document.getElementById('vehicleError').style.display = 'none';
             document.getElementById('mobileError').style.display = 'none';
 
+            if (vehicle && vehicle.indexOf(' ') !== -1) {
+                document.getElementById('vehicleError').textContent = 'Vehicle number must not contain spaces. Please enter in continuous format e.g. MH04GF6292.';
+                document.getElementById('vehicleError').style.display = 'block';
+                return;
+            }
+
             let cleanVehicle = (vehicle || '').trim();
             let cleanMobile = (mobile || '').trim().replace(/[^0-9]/g, '');
 
