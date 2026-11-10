@@ -12,8 +12,7 @@ frappe.ui.form.on('Gift Redemption', {
         
         // Filter gifts by pump ONLY
         frm.set_query('gift_item', 'items', function(doc) {
-            if (!doc.petrol_pump) {
-                frappe.msgprint(__('Please select Petrol Pump first'));
+            if (!doc || !doc.petrol_pump) {
                 return { filters: { 'name': ['=', ''] } };
             }
             return {

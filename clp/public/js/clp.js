@@ -118,6 +118,25 @@ frappe.provide('clp');
                 return orig_not_found(page_name);
             };
         }
+
+        // 6. Intercept and suppress any stray "Module Stock not found" alerts
+        if (!frappe._clp_stock_msg_hooked && typeof frappe.msgprint === 'function') {
+            frappe._clp_stock_msg_hooked = true;
+            const orig_msgprint = frappe.msgprint.bind(frappe);
+            frappe.msgprint = function(msg, title) {
+                let text = '';
+                if (typeof msg === 'string') {
+                    text = msg;
+                } else if (msg && typeof msg === 'object') {
+                    text = (msg.message || '') + ' ' + (msg.title || '') + ' ' + (title || '');
+                }
+                if (text && text.toLowerCase().includes('module stock not found')) {
+                    console.warn('Suppressed Module Stock not found modal:', msg);
+                    return null;
+                }
+                return orig_msgprint.apply(this, arguments);
+            };
+        }
     }
 
     function setupReRoutes() {
