@@ -124,10 +124,10 @@ def get_conditions(filters):
     conditions = ""
     
     if filters.get("from_date"):
-        conditions += " AND gr.redemption_date >= %(from_date)s"
+        conditions += " AND DATE(gr.redemption_date) >= %(from_date)s"
     
     if filters.get("to_date"):
-        conditions += " AND gr.redemption_date <= %(to_date)s"
+        conditions += " AND DATE(gr.redemption_date) <= %(to_date)s"
     
     if filters.get("petrol_pump"):
         conditions += " AND gr.petrol_pump = %(petrol_pump)s"

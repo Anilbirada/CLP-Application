@@ -7,14 +7,14 @@ frappe.query_reports["Gift Redemption Summary"] = {
             "fieldname": "from_date",
             "label": __("From Date"),
             "fieldtype": "Date",
-            "default": frappe.datetime.month_start(),
+            "default": frappe.datetime.year_start ? frappe.datetime.year_start() : "2026-01-01",
             "reqd": 1
         },
         {
             "fieldname": "to_date",
             "label": __("To Date"),
             "fieldtype": "Date",
-            "default": frappe.datetime.month_end(),
+            "default": frappe.datetime.now_date(),
             "reqd": 1
         },
         {
