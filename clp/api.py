@@ -1249,7 +1249,7 @@ def get_customer_portal_by_token(token):
         "purchases": [{"purchase_date": str(p.purchase_date), "petrol_pump": p.petrol_pump, "liters": p.liters,
                        "amount": p.amount, "fuel_type": p.fuel_type, "slip_no": p.slip_no} for p in purchases],
         "redemptions": [{"name": r.name, "redemption_date": str(r.redemption_date), "petrol_pump": r.petrol_pump,
-                         "total_points": r.total_points, "items": r.items} for r in redemptions]}
+                         "total_points": r.total_points, "items": r.get("items") or []} for r in redemptions]}
 
 
 @frappe.whitelist()
