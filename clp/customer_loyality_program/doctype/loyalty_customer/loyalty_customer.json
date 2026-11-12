@@ -158,12 +158,13 @@
    "unique": 1
   },
   {
+   "description": "Petrol pump where the customer first registered.",
    "fieldname": "registration_pump",
    "fieldtype": "Link",
+   "in_list_view": 0,
    "label": "Registration Petrol Pump",
    "options": "Petrol Pump Location",
-   "in_list_view": 0,
-   "description": "Petrol pump where the customer first registered."
+   "reqd": 1
   }
  ],
  "grid_page_length": 50,

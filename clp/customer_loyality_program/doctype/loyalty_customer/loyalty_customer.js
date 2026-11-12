@@ -108,8 +108,8 @@ frappe.ui.form.on('Loyalty Customer', {
         if (frm.doc.vehicle_number && frm.doc.vehicle_number.indexOf(' ') !== -1) {
             frappe.throw(__('Vehicle number must not contain spaces. Please enter in continuous format e.g. MH04GF6292.'));
         }
-        if (frm.is_new() && !frm.doc.registration_pump) {
-            frappe.throw(__('Petrol Pump selection is required for new customer registration.'));
+        if (!frm.doc.registration_pump) {
+            frappe.throw(__('Petrol Pump selection is required for customer registration.'));
         }
     },
 

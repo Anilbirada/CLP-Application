@@ -28,8 +28,8 @@ class LoyaltyCustomer(Document):
         if self.vehicle_number and " " in self.vehicle_number:
             frappe.throw(_("Vehicle number must not contain spaces. Please enter in continuous format e.g. MH04GF6292."))
 
-        if self.is_new() and not self.registration_pump:
-            frappe.throw(_("Petrol Pump selection is required for new customer registration."))
+        if not self.registration_pump:
+            frappe.throw(_("Petrol Pump selection is required for customer registration."))
 
         self.normalize_customer_fields()
         self.validate_unique_mobile()
