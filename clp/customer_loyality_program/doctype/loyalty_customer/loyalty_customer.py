@@ -25,8 +25,13 @@ class LoyaltyCustomer(Document):
         if not self.created_by_user:
             self.created_by_user = frappe.session.user
 
-        if self.vehicle_number and " " in self.vehicle_number:
-            frappe.throw(_("Vehicle number must not contain spaces. Please enter in continuous format e.g. MH04GF6292."))
+        if self.vehicle_number:
+            if " " in self.vehicle_number:
+                frappe.throw(_("Vehicle number must not contain spaces. Please enter in continuous format e.g. MH04GF6292."))
+            cleaned_v = self.vehicle_number.strip().upper()
+            if not re.match(r"^[A-Z]{2}[0-9]{1,2}[A-Z0-9]{1,3}[0-9]{4}$", cleaned_v):
+                frappe.throw(_("Invalid vehicle number format. Please enter a valid registration number (e.g. KA01AB1234)."))
+            self.vehicle_number = cleaned_v
 
         if not self.registration_pump:
             frappe.throw(_("Petrol Pump selection is required for customer registration."))

@@ -105,11 +105,20 @@ frappe.ui.form.on('Loyalty Customer', {
     },
     
     validate: function(frm) {
-        if (frm.doc.vehicle_number && frm.doc.vehicle_number.indexOf(' ') !== -1) {
-            frappe.throw(__('Vehicle number must not contain spaces. Please enter in continuous format e.g. MH04GF6292.'));
-        }
         if (!frm.doc.registration_pump) {
             frappe.throw(__('Petrol Pump selection is required for customer registration.'));
+        }
+        if (frm.doc.vehicle_number) {
+            let v = frm.doc.vehicle_number;
+            if (v.indexOf(' ') !== -1) {
+                frappe.throw(__('Vehicle number must not contain spaces. Please enter in continuous format e.g. MH04GF6292.'));
+            }
+            let vClean = v.trim().toUpperCase();
+            let regex = /^[A-Z]{2}[0-9]{1,2}[A-Z0-9]{1,3}[0-9]{4}$/;
+            if (!regex.test(vClean)) {
+                frappe.throw(__('Invalid vehicle number format. Please enter a valid registration number (e.g. KA01AB1234).'));
+            }
+            frm.set_value('vehicle_number', vClean);
         }
     },
 
@@ -118,11 +127,8 @@ frappe.ui.form.on('Loyalty Customer', {
             frappe.msgprint({
                 title: __('Invalid Vehicle Number'),
                 message: __('Vehicle number must not contain spaces. Please enter in continuous format e.g. MH04GF6292.'),
-                indicator: 'orange'
+                indicator: 'red'
             });
-            frm.set_value('vehicle_number', frm.doc.vehicle_number.replace(/\s+/g, '').toUpperCase());
-        } else if (frm.doc.vehicle_number) {
-            frm.set_value('vehicle_number', frm.doc.vehicle_number.toUpperCase());
         }
     }
 });
