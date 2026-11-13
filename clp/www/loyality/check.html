@@ -668,6 +668,59 @@
             text-decoration: underline;
         }
 
+        .footer-branding-row {
+            margin-top: 12px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            font-size: 12.5px;
+            color: #94a3b8;
+        }
+
+        .footer-logo-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: #ffffff;
+            padding: 3px 8px;
+            border-radius: 6px;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.28);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            vertical-align: middle;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .footer-logo-badge:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.4);
+        }
+
+        .footer-logo-img {
+            height: 22px;
+            width: auto;
+            max-width: 110px;
+            aspect-ratio: 1024 / 312;
+            object-fit: contain;
+            display: block;
+        }
+
+        .footer-brand-text {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .footer-divider {
+            color: rgba(148, 163, 184, 0.4);
+            margin: 0 2px;
+        }
+
+        .footer-rights {
+            white-space: nowrap;
+        }
+
         /* Responsive Breakpoints */
         @media (max-width: 640px) {
             .stats-row {
@@ -685,6 +738,18 @@
             }
             .search-container {
                 padding: 24px 18px;
+            }
+            .footer-branding-row {
+                flex-direction: column;
+                gap: 6px;
+                font-size: 12px;
+            }
+            .footer-divider {
+                display: none;
+            }
+            .footer-logo-img {
+                height: 20px;
+                max-width: 95px;
             }
         }
     </style>
@@ -809,9 +874,19 @@
     <!-- Footer -->
     <footer class="site-footer">
         <p><strong>N.K Sindol Petroleum</strong> — Trusted Fuel & Customer Loyalty Partner</p>
-        <p style="margin-top: 6px; font-size: 12px; opacity: 0.8;">
-            Powered by <a href="https://abmtech.in" target="_blank" rel="noopener noreferrer">ABM Tech Pvt. Ltd.</a> | © <span id="currentYear"></span> All rights reserved.
-        </p>
+        <div class="footer-branding-row">
+            <span class="footer-logo-badge" title="Hi Ideals Technologies Private Limited">
+                <img src="/assets/clp/images/hi_ideals_logo.png" 
+                     onerror="if(!this.dataset.fallback){this.dataset.fallback=1;this.src='/assets/clp/images/hi_ideals_logo.jpg';}" 
+                     alt="Hi Ideals Technologies Private Limited Logo" 
+                     class="footer-logo-img">
+            </span>
+            <span class="footer-brand-text">
+                Powered By <a href="https://hiideals.com" target="_blank" rel="noopener noreferrer">Hi Ideals Technologies Private Limited</a>
+            </span>
+            <span class="footer-divider">|</span>
+            <span class="footer-rights">© <span id="currentYear"></span> All rights reserved.</span>
+        </div>
     </footer>
 
     <script>

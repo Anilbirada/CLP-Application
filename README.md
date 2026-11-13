@@ -378,5 +378,5 @@ AUDIT SUMMARY: 15 / 15 TESTS PASSED (100.0%)
 
 - **Developer & Owner:** [Anil Biradar](https://github.com/Anilbirada)
 - **Organization:** N.K Sindol Petroleum & RSR Technologies
-- **Technology Partner:** ABM Tech Pvt. Ltd.
+- **Technology Partner:** [Hi Ideals Technologies Private Limited](https://hiideals.com)
 - **Framework:** [Frappe Framework](https://frappe.io) (Licensed under MIT)
